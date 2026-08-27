@@ -2627,16 +2627,16 @@
         },
         {
             "name": "minivoper/eshlink-cms",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minivoper/eshlink-cms.git",
-                "reference": "d423ef271e4d241f9a5c6be8ec60f935d6da2d41"
+                "reference": "48d429cfee46a1974009b55859f74d7d31a4e607"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minivoper/eshlink-cms/zipball/d423ef271e4d241f9a5c6be8ec60f935d6da2d41",
-                "reference": "d423ef271e4d241f9a5c6be8ec60f935d6da2d41",
+                "url": "https://api.github.com/repos/minivoper/eshlink-cms/zipball/48d429cfee46a1974009b55859f74d7d31a4e607",
+                "reference": "48d429cfee46a1974009b55859f74d7d31a4e607",
                 "shasum": ""
             },
             "require": {
@@ -2724,10 +2724,10 @@
                 "mcp"
             ],
             "support": {
-                "source": "https://github.com/minivoper/eshlink-cms/tree/v0.1.0",
+                "source": "https://github.com/minivoper/eshlink-cms/tree/v0.1.1",
                 "issues": "https://github.com/minivoper/eshlink-cms/issues"
             },
-            "time": "2026-08-27T09:43:48+00:00"
+            "time": "2026-08-27T14:59:11+00:00"
         },
         {
             "name": "monolog/monolog",

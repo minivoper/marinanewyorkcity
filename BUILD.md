@@ -95,10 +95,31 @@ Then open http://127.0.0.1:8001.
 
 ## Deployment
 
-- Pushed to GitHub as `minivoper/marinanewyorkcity` (created via `gh`)
-- Laravel Cloud: org **Evgeny Mir**, app **marinanewyorkcity**, production environment backed by a Neon Postgres cluster named **marina-db**
-- Deploy command: `php artisan migrate --force --seed` (seeders are idempotent enough to re-run; content ships via seeders, so redeploying refreshes content)
-- Deploys triggered from Laravel Cloud on push / via the Cloud dashboard ("ship")
+- Pushed to GitHub as `minivoper/marinanewyorkcity` (created via `gh`), branch `main`
+- Laravel Cloud: org **EshLink**, app **marinanewyorkcity**, production environment backed by a Neon Postgres cluster named **marina-db**
+- Deploy command is **`php artisan migrate --force`** — no `--seed`. Seeding only ran on every
+  deploy under the old command, which would have reverted CMS edits made through the admin; content
+  bootstrap is now a first-run-guarded `php artisan cms:install --seed-defaults` instead (no-op
+  once the site has been initialized)
+- Push to `main` auto-deploys. Build command runs a `COMPOSER_AUTH` handshake before `composer
+  install`, because `composer.json` points at the private `minivoper/eshlink-cms` package over a
+  VCS repository:
+  ```bash
+  if [ -n "$COMPOSER_AUTH" ]; then case "$COMPOSER_AUTH" in github_pat_*|ghp_*) composer config -g github-oauth.github.com "$COMPOSER_AUTH"; export COMPOSER_AUTH="";; esac; fi
+  composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+  npm ci --audit false
+  npm run build
+  ```
+  `COMPOSER_AUTH` holds the bare `github_pat_...` token and must stay set — every deploy needs it
+  to fetch the private package. A failed build never affects the live site: Cloud keeps serving the
+  last successful deployment until a new one finishes.
+- The site now runs on the **eshlink CMS** (package `minivoper/eshlink-cms`, private,
+  `github.com/minivoper/eshlink-cms`) — Page/Post/Event/MediaAsset/Setting are wrapped via
+  `ModelSource`, not migrated; controllers/feeds/SEO components are unchanged. Admin lives at
+  `https://marina-admin.eshlink.com`; the CMS-managed public preview is
+  `https://marina.eshlink.com` (noindex, undiscoverable — not `marinanewyorkcity.com`, which is
+  still parked on Canva; see Unfinished below). Full platform docs: `~/Claude/docs/eshlink/`
+  (`SYSTEM.md`, `INFRASTRUCTURE.md`, `OPERATIONS.md`, `PHASES.md`).
 
 ### Before any production import: check who can sign in
 

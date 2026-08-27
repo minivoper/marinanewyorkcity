@@ -60,7 +60,8 @@ theme CSS tokens were transcribed into `docs/wix-ref/`. All images were download
 locally into `public/media/` (`brand/`, `about/`, `posts/`, `events/`, `shop/`, `travel/`,
 `instagram/` — the Instagram folder holds ~25 snapshot JPGs of recent posts). The three
 Wix-hosted webfonts (Arial Black, Avenir LT 35 Light, DIN Next Light) were saved as
-woff2 in `public/fonts/` and preloaded in the layout. Nothing hotlinks to Wix.
+woff2 in `public/fonts/` and preloaded in the layout. Most harvested media is local;
+the remaining Wix CDN images embedded inside imported HTML are tracked below.
 
 ## Design notes
 
@@ -99,7 +100,55 @@ Then open http://127.0.0.1:8001.
 - Deploy command: `php artisan migrate --force --seed` (seeders are idempotent enough to re-run; content ships via seeders, so redeploying refreshes content)
 - Deploys triggered from Laravel Cloud on push / via the Cloud dashboard ("ship")
 
+### Before any production import: check who can sign in
+
+The dev database has carried test accounts more than once. They are ordinary
+`users` rows with confirmed two-factor secrets, so they work exactly as well in
+production as they do here, and nothing in the deploy will notice them.
+
+Run this against the target database before importing anything into it, and
+again afterwards:
+
+```sh
+php artisan tinker --execute 'App\Models\User::query()->pluck("email", "id")->each(fn ($e, $i) => print("$i  $e\n"));'
+```
+
+Marina's own account is the only row that belongs there. Anything else,
+including anything at `@eshlink.test`, is a test account and must be removed
+along with its two-factor row:
+
+```sh
+php artisan tinker --execute '
+$user = App\Models\User::where("email", "someone@eshlink.test")->first();
+DB::table("cms_two_factor")->where("user_id", $user->id)->delete();
+$user->delete();
+'
+```
+
+Two accounts, `qa@eshlink.test` and `qa-editor@eshlink.test`, were created for
+the pre-deploy QA passes and have since been removed from the dev database.
+Their audit rows stay, because the activity log is append-only by design, and a
+signed-in account that no longer exists is exactly what that log is for.
+
+### Media in production
+
+The photo library serves its files one of two ways, and the disk decides which
+(see `Eshlink\Cms\Media\MediaService::urlForPath()`):
+
+- a disk that can address itself publicly hands out its own URL, and the bytes
+  never touch PHP. That is what production must use: set `CMS_MEDIA_DISK=s3`
+  with `AWS_URL` pointing at the bucket or the CDN in front of it, and make sure
+  objects are publicly readable.
+- anything else is served by the package's own `/cms-media/{path}` route. That
+  is the local default, and it is correct but slower.
+
+The failure mode this replaced is worth knowing: a `local` disk with
+`'serve' => true` and no `visibility` returns a plausible `/storage/...` URL for
+a private disk, and every image on the site is a 404. If photographs stop
+appearing after a deploy, that is the first thing to check.
+
 ## Unfinished
 
 1. **DNS**: marinanewyorkcity.com is still attached to Canva. Point it at Laravel Cloud (add the custom domain in the Cloud dashboard, update DNS), after which the canonical URLs in sitemap/feeds/llms.txt become correct.
 2. **Visual polish**: layout is close to the Wix draft but not pixel-identical — spacing, hover states, and some section compositions could be tightened against the Wix reference.
+3. **Media migration**: move the remaining images embedded in imported post/page HTML off `static.wixstatic.com` and into the local media pipeline, then replace their hot-linked URLs and add meaningful alt text. The links still render today, so this is tracked here rather than changed as part of the CMS bug fixes.

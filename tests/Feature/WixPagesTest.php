@@ -70,4 +70,17 @@ class WixPagesTest extends TestCase
         $this->get('/merch')->assertOk()->assertSeeText('Scented Soy Candle');
         $this->get('/accessibility-statement')->assertOk()->assertSeeText('ACCESSIBILITY STATEMENT');
     }
+
+    public function test_legal_breadcrumbs_link_to_local_pages_instead_of_the_retired_wix_site(): void
+    {
+        $this->seed();
+
+        foreach (['/privacy-policy', '/terms-and-conditions'] as $path) {
+            $this->get($path)
+                ->assertOk()
+                ->assertDontSee('soulbygirl.wixstudio.com', false)
+                ->assertSee('href="/"', false)
+                ->assertSee('href="'.$path.'"', false);
+        }
+    }
 }

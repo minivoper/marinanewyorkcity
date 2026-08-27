@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Page;
 use App\Models\Post;
+use Eshlink\Cms\Facades\Cms;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\View\View;
 
@@ -54,7 +55,7 @@ class PageController extends Controller
     public function howICreate(): View
     {
         $featuredPost = Post::published()
-            ->where('slug', 'how-to-create-a-cinematic-video-with-an-iphone')
+            ->where('slug', Cms::value('how_i_create.featured_post_slug'))
             ->first();
 
         return view('pages.how-i-create', compact('featuredPost'));

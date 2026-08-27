@@ -904,6 +904,37 @@ nav[role='navigation'] a {
     color: var(--color-ink);
 }
 
+/* ---------- not found ---------- */
+
+/* Two rows of somewhere-else-to-go, wrapping rather than overflowing: this
+   page is reached as often on a phone as anywhere, usually from a link in an
+   Instagram caption that outlived the story it pointed at. */
+
+.notfound-actions,
+.notfound-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.notfound-links {
+    gap: 12px 28px;
+    font-family: var(--font-body);
+    font-size: 18px;
+}
+
+.notfound-links a {
+    color: var(--color-sand);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+}
+
+.notfound-links a:hover,
+.notfound-links a:focus-visible {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-ink);
+}
+
 /* ---------- reveal animation ---------- */
 
 .fade-up {

@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use Closure;
+use Eshlink\Cms\Support\HostMode;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
@@ -13,6 +14,17 @@ class SeoHead extends Component
     public string $imageUrl;
 
     public string $pageTitle;
+
+    /**
+     * Whether the canonical link, its hreflang alternate and og:url are left
+     * out entirely.
+     *
+     * True on every host that is not the production domain. A canonical tag
+     * pointing at marinanewyorkcity.com is exactly how a preview host on
+     * eshlink.com teaches a crawler that it exists, and no amount of
+     * X-Robots-Tag undoes a URL that has already been discovered.
+     */
+    public bool $canonicalSuppressed;
 
     public function __construct(
         public ?string $title = null,
@@ -30,6 +42,7 @@ class SeoHead extends Component
         $this->imageUrl = $image
             ? (str_starts_with($image, 'http') ? $image : $baseUrl.'/'.ltrim($image, '/'))
             : $baseUrl.'/favicon.ico';
+        $this->canonicalSuppressed = HostMode::canonicalsSuppressed();
     }
 
     /**

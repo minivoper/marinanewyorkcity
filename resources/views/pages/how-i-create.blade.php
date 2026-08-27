@@ -1,15 +1,17 @@
 @extends('layouts.app')
 
 @php
-    $seoTitle = 'HOW I CREATE | marina.newyorkcity';
-    $seoDescription = 'How Marina Kapler creates cinematic New York City content with an iPhone.';
+    use Eshlink\Cms\Facades\Cms;
+
+    $seoTitle = Cms::value('how_i_create.seo_title');
+    $seoDescription = Cms::value('how_i_create.seo_description');
 @endphp
 
 @section('content')
     <section class="section page">
         <div class="wrap">
             <div class="section-head fade-up">
-                <h1 class="display t-h1">HOW I CREATE</h1>
+                <h1 class="display t-h1">@cms('how_i_create.heading')</h1>
             </div>
             @if ($featuredPost)
                 <div class="card-grid card-grid--single">

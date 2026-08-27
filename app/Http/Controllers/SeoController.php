@@ -4,12 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Post;
+use Eshlink\Cms\Support\HostMode;
 use Illuminate\Http\Response;
 
+/**
+ * The discovery surface, which exists only on the production host.
+ *
+ * A sitemap or an llms.txt served from a preview host is a machine-readable
+ * index of a site that is not meant to be found yet, and it lists the real
+ * domain while it is at it. These endpoints answer on marinanewyorkcity.com
+ * and 404 anywhere else; robots.txt is the exception, because a crawler that
+ * reaches a preview host needs to be told "no" rather than "no such file".
+ */
 class SeoController extends Controller
 {
     public function sitemap(): Response
     {
+        abort_unless(HostMode::isProduction(), 404);
+
         $baseUrl = rtrim(config('site.production_url'), '/');
         $urls = collect([
             $baseUrl,
@@ -58,6 +70,11 @@ class SeoController extends Controller
 
     public function robots(): Response
     {
+        if (! HostMode::isProduction()) {
+            return response("User-agent: *\nDisallow: /\n", 200)
+                ->header('Content-Type', 'text/plain; charset=UTF-8');
+        }
+
         $agents = [
             'Googlebot',
             'GPTBot',
@@ -79,6 +96,8 @@ class SeoController extends Controller
 
     public function llms(): Response
     {
+        abort_unless(HostMode::isProduction(), 404);
+
         $content = <<<'TEXT'
 Marina Kapler is the New York City content creator behind @marina.newyorkcity, sharing cinematic city guides, culture, events, and visual stories.
 

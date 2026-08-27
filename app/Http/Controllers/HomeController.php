@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use Illuminate\Support\Facades\File;
+use Eshlink\Cms\Facades\Cms;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -27,26 +27,8 @@ class HomeController extends Controller
         return view('home', [
             'newsPosts' => $newsPosts,
             'guidePosts' => $guidePosts,
-            'instagramItems' => $this->instagramItems(),
+            'instagramItems' => Cms::value('instagram_feed.items', []),
+            'instagramProfileUrl' => Cms::value('instagram_feed.profile_url'),
         ]);
-    }
-
-    /**
-     * @return array<int, array{local_path: string, caption: string}>
-     */
-    private function instagramItems(): array
-    {
-        $path = base_path('docs/wix-ref/instagram.json');
-
-        if (! File::exists($path)) {
-            return [];
-        }
-
-        $items = File::json($path)['items'] ?? [];
-
-        return array_values(array_filter(
-            $items,
-            fn (array $item): bool => ($item['downloaded'] ?? false) && isset($item['local_path']),
-        ));
     }
 }

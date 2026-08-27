@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\EventOccurrence;
 use App\Models\Post;
 use Closure;
+use Eshlink\Cms\Support\HostMode;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
@@ -49,24 +50,24 @@ class JsonLd extends Component
                 'sameAs' => config('site.socials'),
                 'homeLocation' => ['@type' => 'Place', 'name' => 'New York City'],
             ],
-            [
+            array_filter([
                 '@type' => 'NewsMediaOrganization',
                 '@id' => $organizationId,
                 'name' => config('app.name'),
-                'url' => $baseUrl,
+                'url' => $this->url($baseUrl),
                 'email' => config('site.email'),
                 'founder' => ['@id' => $personId],
                 'sameAs' => config('site.socials'),
-            ],
+            ], fn (mixed $value): bool => $value !== null),
         ];
 
         if ($this->post) {
-            $graph[] = [
+            $graph[] = array_filter([
                 '@type' => in_array($this->post->schema_type, ['NewsArticle', 'Article'], true)
                     ? $this->post->schema_type
                     : 'Article',
                 '@id' => $baseUrl.route('posts.show', $this->post->slug, false).'#article',
-                'url' => $baseUrl.route('posts.show', $this->post->slug, false),
+                'url' => $this->url($baseUrl.route('posts.show', $this->post->slug, false)),
                 'headline' => $this->post->title,
                 'description' => $this->post->meta_description,
                 'datePublished' => $this->post->published_at->toIso8601String(),
@@ -74,7 +75,7 @@ class JsonLd extends Component
                 'author' => ['@id' => $personId],
                 'publisher' => ['@id' => $organizationId],
                 'contentLocation' => ['@type' => 'Place', 'name' => $this->post->location_name ?: 'New York City'],
-            ];
+            ], fn (mixed $value): bool => $value !== null);
         }
 
         if ($this->event) {
@@ -83,7 +84,7 @@ class JsonLd extends Component
             $eventSchema = [
                 '@type' => 'Event',
                 '@id' => $eventUrl.'#event',
-                'url' => $eventUrl,
+                'url' => $this->url($eventUrl),
                 'name' => $this->event->title,
                 'description' => $this->event->meta_description,
                 'eventStatus' => 'https://schema.org/EventScheduled',
@@ -105,5 +106,18 @@ class JsonLd extends Component
         }
 
         return $graph;
+    }
+
+    /**
+     * A crawlable `url` on production hosts, and null everywhere else.
+     *
+     * `@id` values keep the production URL because they are identifiers that
+     * hold the graph together, not addresses anything follows. `url` is an
+     * address, and on a preview host it would publish the real domain in
+     * machine-readable form on a page that is meant to be undiscoverable.
+     */
+    private function url(string $url): ?string
+    {
+        return HostMode::canonicalsSuppressed() ? null : $url;
     }
 }

@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Eshlink\Cms\Support\HostMode;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
+/**
+ * The feeds, which — like the sitemap — exist only on the production host.
+ *
+ * Both are absolute-URL documents built from `site.production_url`, so serving
+ * one from a preview host would hand a reader a list of the real domain's
+ * pages from a site that has not launched.
+ */
 class FeedController extends Controller
 {
     public function rss(): Response
     {
+        abort_unless(HostMode::isProduction(), 404);
+
         $posts = $this->posts();
 
         return response()
@@ -20,6 +30,8 @@ class FeedController extends Controller
 
     public function json(): JsonResponse
     {
+        abort_unless(HostMode::isProduction(), 404);
+
         $baseUrl = rtrim(config('site.production_url'), '/');
         $items = $this->posts()->map(fn (Post $post): array => [
             'id' => $baseUrl.route('posts.show', $post->slug, false),

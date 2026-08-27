@@ -1,77 +1,56 @@
 @extends('layouts.app')
 
 @php
-    $seoTitle = 'SHOP | marina.newyorkcity';
-    $seoDescription = 'Digital products and New York merch by marina.newyorkcity.';
+    use Eshlink\Cms\Facades\Cms;
+
+    $seoTitle = Cms::value('shop.seo_title');
+    $seoDescription = Cms::value('shop.seo_description');
 @endphp
 
 @section('content')
     <section class="section page">
         <div class="wrap">
             <div class="section-head fade-up">
-                <h1 class="display t-h1">SHOP</h1>
+                <h1 class="display t-h1">@cms('shop.heading')</h1>
             </div>
 
             <div class="section-head fade-up">
-                <h2 class="display t-h3">Digital products</h2>
+                <h2 class="display t-h3">@cms('shop.digital_heading')</h2>
             </div>
             <div class="card-grid fade-up">
-                <a class="card" href="https://links.marinanewyorkcity.com/digitalproducts" rel="noopener">
+{{-- Loop directives sit at column 0 so the rendered indentation matches the cards they replaced. --}}@foreach (Cms::value('shop.digital_products', []) as $digitalProduct)
+                <a class="card" href="{{ $digitalProduct['url'] }}" rel="noopener">
                     <div class="card-media card-media--portrait">
-                        <img src="{{ asset('media/shop/e628c7_fc77fbaabee5473a806e75cbba584320.jpg') }}" alt="Lightroom Presets Collection" loading="lazy">
+                        <img src="{{ asset($digitalProduct['image']) }}" alt="{{ $digitalProduct['alt'] }}" loading="lazy">
                     </div>
-                    <h3 class="card-title">Lightroom Presets Collection</h3>
+                    <h3 class="card-title">{{ $digitalProduct['title'] }}</h3>
                 </a>
-                <a class="card" href="https://links.marinanewyorkcity.com/digitalproducts" rel="noopener">
-                    <div class="card-media card-media--portrait">
-                        <img src="{{ asset('media/shop/e628c7_d414b7c345ed42e39c358fe73d43d22b.jpg') }}" alt="Lightroom Presets Collections" loading="lazy">
-                    </div>
-                    <h3 class="card-title">Lightroom Presets Collections</h3>
-                </a>
-                <a class="card" href="https://links.marinanewyorkcity.com/digitalproducts" rel="noopener">
-                    <div class="card-media card-media--portrait">
-                        <img src="{{ asset('media/shop/e628c7_6775031bad1d46f7b776d8cfff12760b.jpg') }}" alt="Free Screen Savers — sunset by marinanewyorkcity" loading="lazy">
-                    </div>
-                    <h3 class="card-title">Free Screen Savers</h3>
-                </a>
+@endforeach
             </div>
             <p class="fade-up cluster">
-                <a class="btn" href="https://links.marinanewyorkcity.com/digitalproducts" rel="noopener">SHOP HERE</a>
+                <a class="btn" href="{{ Cms::value('shop.digital_cta_url') }}" rel="noopener">@cms('shop.digital_cta_label')</a>
             </p>
 
             <div class="section-head fade-up section-follow">
-                <h2 class="display t-h3">New York Merch</h2>
-                <p class="kicker">Keep or wear a piece of New York</p>
+                <h2 class="display t-h3">@cms('shop.merch_heading')</h2>
+                <p class="kicker">@cms('shop.merch_kicker')</p>
             </div>
             <div class="card-grid fade-up">
+@foreach (Cms::value('shop.merch_images', []) as $merchImage)
                 <div class="card">
                     <div class="card-media card-media--square">
-                        <img src="{{ asset('media/shop/e628c7_9012ec656b1a4826b97e8ccaa8632aba.jpg') }}" alt="New York merch cup" loading="lazy">
+                        <img src="{{ asset($merchImage['image']) }}" alt="{{ $merchImage['alt'] }}" loading="lazy">
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-media card-media--square">
-                        <img src="{{ asset('media/shop/e628c7_8e5615aa3f2248c3ba809f16e50dd928.jpeg') }}" alt="New York merch ornament" loading="lazy">
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-media card-media--square">
-                        <img src="{{ asset('media/shop/e628c7_470106c04e654b97b37fbf88d643dcc9.jpg') }}" alt="New York merch sticker" loading="lazy">
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-media card-media--square">
-                        <img src="{{ asset('media/shop/e628c7_1bb8f279d4a640828c7f7452b4254701.jpg') }}" alt="New York merch hoodie" loading="lazy">
-                    </div>
-                </div>
+@endforeach
             </div>
             <p class="fade-up cluster">
-                <a class="btn btn--ghost" href="{{ route('pages.merch') }}">Explore</a>
+                <a class="btn btn--ghost" href="{{ route('pages.merch') }}">@cms('shop.merch_cta_label')</a>
             </p>
 
             <div class="section-head fade-up section-follow">
-                <h2 class="display t-h3">Affiliate links</h2>
-                <p class="kicker">coming soon</p>
+                <h2 class="display t-h3">@cms('shop.affiliate_heading')</h2>
+                <p class="kicker">@cms('shop.affiliate_kicker')</p>
             </div>
         </div>
     </section>

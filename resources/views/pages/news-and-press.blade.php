@@ -1,15 +1,17 @@
 @extends('layouts.app')
 
 @php
-    $seoTitle = 'NEWS AND PRESS | marina.newyorkcity';
-    $seoDescription = 'New York City news and press releases by Marina Kapler.';
+    use Eshlink\Cms\Facades\Cms;
+
+    $seoTitle = Cms::value('news_and_press.seo_title');
+    $seoDescription = Cms::value('news_and_press.seo_description');
 @endphp
 
 @section('content')
     <section class="section page">
         <div class="wrap">
             <div class="section-head fade-up">
-                <h1 class="display t-h1">NEWS AND PRESS</h1>
+                <h1 class="display t-h1">@cms('news_and_press.heading')</h1>
             </div>
             <div class="card-grid">
                 @forelse ($posts as $postItem)
@@ -29,7 +31,7 @@
                         <p class="card-excerpt">{{ $postItem->excerpt }}</p>
                     </a>
                 @empty
-                    <p class="text-sand">No published stories found.</p>
+                    <p class="text-sand">@cms('news_and_press.empty_message')</p>
                 @endforelse
             </div>
             {{ $posts->links() }}

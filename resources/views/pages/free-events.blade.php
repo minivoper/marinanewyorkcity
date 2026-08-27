@@ -1,15 +1,17 @@
 @extends('layouts.app')
 
 @php
-    $seoTitle = 'FREE EVENTS | marina.newyorkcity';
-    $seoDescription = 'Free New York City events selected by Marina Kapler.';
+    use Eshlink\Cms\Facades\Cms;
+
+    $seoTitle = Cms::value('free_events.seo_title');
+    $seoDescription = Cms::value('free_events.seo_description');
 @endphp
 
 @section('content')
     <section class="section page">
         <div class="wrap">
             <div class="section-head fade-up">
-                <h1 class="display t-h1">FREE EVENTS</h1>
+                <h1 class="display t-h1">@cms('free_events.heading')</h1>
             </div>
             @forelse ($events as $eventItem)
                 <article class="event-row fade-up">
@@ -34,10 +36,10 @@
                             <p class="card-excerpt">{{ $eventItem->venue_name }}</p>
                         @endif
                     </div>
-                    <a class="btn btn--ghost" href="{{ route('events.show', $eventItem->slug) }}">More info</a>
+                    <a class="btn btn--ghost" href="{{ route('events.show', $eventItem->slug) }}">@cms('free_events.cta_label')</a>
                 </article>
             @empty
-                <p class="text-sand">No events found.</p>
+                <p class="text-sand">@cms('free_events.empty_message')</p>
             @endforelse
         </div>
     </section>

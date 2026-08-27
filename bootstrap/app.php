@@ -38,6 +38,16 @@ return Application::configure(basePath: dirname(__DIR__))
         CmsServiceProvider::forceNoIndexGlobally($middleware);
 
         /*
+         * And the admin's own framing and sniffing headers, global for exactly
+         * the same reason. `cms.security-headers` is on the admin route group,
+         * so `/login` carried X-Frame-Options and the not-found screen beside
+         * it did not — a URI that matched no route never enters a group. The
+         * middleware asks HostMode whose host answered before it sets
+         * anything, so marinanewyorkcity.com is untouched by this line.
+         */
+        CmsServiceProvider::secureAdminGlobally($middleware);
+
+        /*
          * On the `web` group because the preview gate reads and writes a
          * session, and because the crawler denylist only has an opinion about
          * pages a person could be shown. The classes are named directly rather

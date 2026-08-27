@@ -88,7 +88,7 @@ class EventType extends BaseType implements PubliclyRoutable
             RichText::make('body')->required()->sanitizeOnSave(false)->max(200000),
             Image::make('cover_path')->storesPath()->max(255)
                 ->withLabel('Cover picture')
-                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
+                ->help('Choose one from your photos. Leave it alone and the picture on this page stays as it is.'),
             Text::make('venue_name')->required()->max(255),
             Text::make('venue_address')->required()->max(255),
             Text::make('timezone')->required()->max(255),

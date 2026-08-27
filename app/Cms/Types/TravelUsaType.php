@@ -33,7 +33,7 @@ class TravelUsaType extends PageSingleton
             Text::make('heading')->required()->max(120),
             Image::make('video_poster')->storesPath()->required()->max(255)
                 ->withLabel('Still picture, shown while the film loads')
-                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
+                ->help('Choose one from your photos. Leave it alone and the picture on this page stays as it is.'),
             Text::make('video_path')->required()->max(255)
                 ->withLabel('The looping film')
                 ->help('The film that plays behind this section. Films are not kept in your photo library, so this one is set by the site.'),

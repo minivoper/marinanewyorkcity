@@ -82,17 +82,53 @@ class AdminErrorPagesTest extends TestCase
             ->assertSee('<meta name="robots" content="noindex, nofollow', false);
     }
 
-    public function test_the_public_site_still_answers_a_dead_link_exactly_as_laravel_does(): void
+    /**
+     * The public site answers its dead links in its own voice.
+     *
+     * It used to be Laravel's white page; it is now
+     * resources/views/errors/404.blade.php, which is Marina's design and hers
+     * to change. What must never happen is the admin's screen appearing there
+     * — that panel is written for the person who signs in, and none of its
+     * words mean anything to a reader who followed a stale Instagram link.
+     */
+    public function test_the_public_site_answers_a_dead_link_in_its_own_words_and_never_the_admins(): void
     {
         $response = $this->get(self::PUBLIC_HOST.'/no-such-page')->assertNotFound();
 
-        // Laravel's own minimal page, untouched.
-        $response->assertSee('404', false);
-        $response->assertSee('Not Found', false);
-
-        // And not one word of the admin's.
         $response->assertDontSee('That page is not here');
         $response->assertDontSee('Back to your site');
         $response->assertDontSee('cms-guest', false);
+    }
+
+    /**
+     * The framing and sniffing headers a 404 used to lose.
+     *
+     * `cms.security-headers` is on the admin route group, and a URI that
+     * matched no route never enters a group — so `/login` carried
+     * X-Frame-Options and the not-found screen beside it did not. Registering
+     * the middleware globally in bootstrap/app.php is what closes it, and the
+     * middleware asks HostMode whose host answered so the public site is
+     * untouched.
+     */
+    public function test_an_admin_screen_that_matched_no_route_still_refuses_to_be_framed(): void
+    {
+        $host = 'http://'.config('cms.admin_domain');
+
+        foreach ([
+            $this->get($host.'/no-such-screen')->assertNotFound(),
+            $this->get($host.'/login')->assertOk(),
+        ] as $response) {
+            $this->assertSame('DENY', $response->headers->get('X-Frame-Options'));
+            $this->assertSame('nosniff', $response->headers->get('X-Content-Type-Options'));
+            $this->assertStringContainsString('noindex', (string) $response->headers->get('X-Robots-Tag'));
+        }
+    }
+
+    public function test_the_public_site_gets_none_of_the_admins_headers(): void
+    {
+        $response = $this->get(self::PUBLIC_HOST.'/no-such-page')->assertNotFound();
+
+        $this->assertNull($response->headers->get('X-Frame-Options'));
+        $this->assertNull($response->headers->get('Content-Security-Policy-Report-Only'));
     }
 }

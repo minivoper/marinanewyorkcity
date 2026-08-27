@@ -131,6 +131,53 @@ class CmsModelSourceTest extends TestCase
         }
     }
 
+    /**
+     * Opening a page, reading it, and pressing Save.
+     *
+     * A `<textarea>` posts its newlines as CRLF whatever it was handed, and the
+     * seeded bodies are stored with LF. So a save with nothing typed into it
+     * arrived differing by a byte per line — enough to open a draft on all five
+     * pages and put "Five things are written but not on the site yet" on the
+     * dashboard for work nobody had done. The only ways out were to publish it
+     * or to throw it away, and where the draft came out byte-identical the
+     * editor showed Live and drew no "throw it away" button at all.
+     *
+     * Held here as well as in the package, because it is the shape of Marina's
+     * own rows that made it happen.
+     */
+    public function test_saving_a_page_without_typing_anything_leaves_it_live(): void
+    {
+        $this->seed();
+
+        Artisan::call('cms:normalize-content', ['--type' => ['page']]);
+
+        $entries = app(EntryService::class);
+        $type = app(TypeRegistry::class)->get('page');
+
+        $records = $entries->list($type);
+        $this->assertCount(5, $records);
+
+        foreach ($records as $record) {
+            // Without a newline in it there is nothing for CRLF to rewrite and
+            // this test would pass by saying nothing.
+            $this->assertStringContainsString("\n", (string) $record['data']['body']);
+
+            $updated = $entries->update($type, $record['id'], [
+                // What her browser sends back for a body it never touched.
+                'body' => str_replace("\n", "\r\n", (string) $record['data']['body']),
+            ], ['base_revision_id' => $record['current_version']]);
+
+            $this->assertFalse(
+                $updated['has_unpublished_changes'],
+                "Page {$record['slug']} came back as edited after a save that changed nothing.",
+            );
+            $this->assertSame($record['data']['body'], $updated['data']['body']);
+        }
+
+        // Not one draft row, so nothing to nag her about and nothing stranded.
+        $this->assertSame(0, DB::table('cms_drafts')->count());
+    }
+
     public function test_a_typed_local_event_time_and_an_untouched_resave_are_byte_stable(): void
     {
         $this->seed();

@@ -98,7 +98,7 @@ class PostType extends BaseType implements PubliclyRoutable
                 ->allow(array_keys(Html::ALLOWED)),
             Image::make('cover_path')->storesPath()->max(255)
                 ->withLabel('Cover picture')
-                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
+                ->help('Choose one from your photos. Leave it alone and the picture on this page stays as it is.'),
             DateTime::make('published_at')
                 ->help('A date in the future keeps the story off the site until it arrives.'),
             Number::make('read_minutes')->integer()->min(1)->max(240),

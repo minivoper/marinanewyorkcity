@@ -62,7 +62,7 @@ class MediaAssetType extends BaseType
         return Schema::make([
             Image::make('path')->storesPath()->required()->max(255)
                 ->withLabel('The picture')
-                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
+                ->help('Choose one from your photos. Leave it alone and the picture on this page stays as it is.'),
             Text::make('alt')->required()->max(255)
                 ->help('What the picture shows, for anyone who cannot see it.'),
             Text::make('credit')->max(255),

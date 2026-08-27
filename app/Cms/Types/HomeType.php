@@ -48,7 +48,7 @@ class HomeType extends PageSingleton
         return Schema::make([
             Image::make('hero_image')->storesPath()->required()->max(255)
                 ->withLabel('The big picture at the top')
-                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
+                ->help('Choose one from your photos. Leave it alone and the picture on this page stays as it is.'),
             Text::make('hero_image_alt')->required()->max(255),
             Text::make('hero_heading')->required()->max(120)
                 ->governedBy(new NoDashes),

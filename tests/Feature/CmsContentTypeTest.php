@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Cms\Types\HomeType;
 use App\Cms\Types\ShopType;
+use App\Models\MediaAsset;
 use Eshlink\Cms\Contracts\ContentType;
 use Eshlink\Cms\Contracts\Presentable;
 use Eshlink\Cms\Models\CmsSetting;
@@ -11,6 +12,7 @@ use Eshlink\Cms\Services\EntryService;
 use Eshlink\Cms\Support\SiteMap;
 use Eshlink\Cms\Support\TypeRegistry;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -201,7 +203,6 @@ class CmsContentTypeTest extends TestCase
             'post' => ['Story', 'Stories', SiteMap::GROUP_COLLECTION],
             'event' => ['Event', 'Events', SiteMap::GROUP_COLLECTION],
             'page' => ['Page', 'Pages', SiteMap::GROUP_COLLECTION],
-            'media_asset' => ['Photo description', 'Photo descriptions', SiteMap::GROUP_SETUP],
             'site_settings' => ['Settings', 'Settings', SiteMap::GROUP_SETUP],
         ];
 
@@ -253,5 +254,22 @@ class CmsContentTypeTest extends TestCase
                 "{$key} still calls itself a page. She calls it by its name.",
             );
         }
+    }
+
+    /**
+     * "Photo descriptions" sat in the sidebar beside "Photos", and told her the
+     * work she had just done on the other screen did not exist: it reads the
+     * legacy `media_assets` index of files already under `public/media`, which
+     * no upload ever writes to, so it said "No photo descriptions yet" forever.
+     *
+     * Unregistering is the whole fix. The table and the model are untouched,
+     * because dropping them is a migration and this is a sidebar problem.
+     */
+    public function test_the_photo_descriptions_screen_is_gone_and_its_table_is_not(): void
+    {
+        $this->assertArrayNotHasKey('media_asset', app(TypeRegistry::class)->all());
+
+        $this->assertTrue(Schema::hasTable('media_assets'));
+        $this->assertSame(0, MediaAsset::query()->count());
     }
 }

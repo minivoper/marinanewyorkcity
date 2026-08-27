@@ -43,7 +43,7 @@ class ShopType extends PageSingleton
                 Text::make('title')->required()->max(120),
                 Image::make('image')->storesPath()->required()->max(255)
                     ->withLabel('The picture')
-                    ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
+                    ->help('Choose one from your photos. Leave it alone and the picture on this page stays as it is.'),
                 Text::make('alt')->required()->max(255),
                 Url::make('url')->required()->max(255),
             ])),

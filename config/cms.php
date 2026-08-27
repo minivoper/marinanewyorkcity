@@ -7,7 +7,6 @@ use App\Cms\Types\FreeEventsType;
 use App\Cms\Types\HomeType;
 use App\Cms\Types\HowICreateType;
 use App\Cms\Types\InstagramFeedType;
-use App\Cms\Types\MediaAssetType;
 use App\Cms\Types\MerchType;
 use App\Cms\Types\NewsAndPressType;
 use App\Cms\Types\PageType;
@@ -146,7 +145,21 @@ return [
         PostType::class,
         EventType::class,
         PageType::class,
-        MediaAssetType::class,
+
+        // `App\Cms\Types\MediaAssetType` used to be here, and the screen it
+        // drew was "Photo descriptions". It is deliberately not registered any
+        // more: the sidebar had it beside "Photos", the two did different jobs
+        // under names nobody could tell apart, and the older one contradicted
+        // the newer. Marina would upload a photograph with a description on
+        // Photos, open Photo descriptions, and be told "No photo descriptions
+        // yet" — because that screen reads the legacy `media_assets` index of
+        // the files already under `public/media`, which no upload ever writes
+        // to. Two screens for one job, one of them denying the work just done.
+        //
+        // The type class, `App\Models\MediaAsset`, the `media_assets` table
+        // and its seeder all stay exactly where they are — nothing is dropped
+        // and nothing that renders the public site changes. What is removed is
+        // one card in the sidebar, and putting it back is this one line.
 
         // The `settings` key/value table, as one form rather than five rows of
         // JSON. `App\Cms\Types\SettingsType` used to list those rows here; it

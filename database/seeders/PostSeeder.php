@@ -53,7 +53,7 @@ HTML,
                 'slug' => 'experience-the-vibrancy-of-west-side-fest-2026-with-free-cultural-events-and-art-activities',
                 'cover_path' => 'media/posts/e628c7_c2f4e3fb8db84c3b889b0a786f7eb51e.png',
                 'title' => 'Experience the Vibrancy of West Side Fest 2026 with Free Cultural Events and Art Activities',
-                'excerpt' => 'West Side Fest returns July 10–12, 2026 with free artmaking, workshops, performances, dancing, crafts, and special programs across Manhattan’s West Side cultural institutions.',
+                'excerpt' => 'West Side Fest returns July 10-12, 2026 with free artmaking, workshops, performances, dancing, crafts, and special programs across Manhattan’s West Side cultural institutions.',
                 'body' => <<<'HTML'
 <p>West Side Fest returns July 10 through July 12, 2026 for a free, multi-site celebration of arts and culture across Manhattan’s West Side.</p>
 <p>Organizations in the West Side Cultural Network are presenting artmaking, workshops, performances, dancing, crafts, and other programs. Participating destinations span museums, galleries, parks, theaters, and community spaces, making the festival easy to explore as a neighborhood itinerary.</p>
@@ -62,7 +62,7 @@ HTML,
                 'published_at' => '2026-06-24 09:00:00',
                 'read_minutes' => 4,
                 'meta_title' => 'West Side Fest 2026 Free NYC Arts Events',
-                'meta_description' => 'Explore West Side Fest in Manhattan from July 10–12, 2026, with free cultural events, workshops, artmaking, and performances.',
+                'meta_description' => 'Explore West Side Fest in Manhattan from July 10-12, 2026, with free cultural events, workshops, artmaking, and performances.',
                 'geo_summary' => 'A free arts and culture festival across Manhattan’s West Side.',
                 'location_name' => 'West Side, Manhattan',
                 'schema_type' => 'NewsArticle',

@@ -84,7 +84,7 @@ class ShopType extends PageSingleton
                 [
                     'title' => 'Free Screen Savers',
                     'image' => 'media/shop/e628c7_6775031bad1d46f7b776d8cfff12760b.jpg',
-                    'alt' => 'Free Screen Savers — sunset by marinanewyorkcity',
+                    'alt' => 'Free Screen Savers, sunset by marinanewyorkcity',
                     'url' => 'https://links.marinanewyorkcity.com/digitalproducts',
                 ],
             ],

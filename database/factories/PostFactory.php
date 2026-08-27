@@ -27,7 +27,7 @@ class PostFactory extends Factory
             'read_minutes' => 3,
             'meta_title' => fake()->sentence(),
             'meta_description' => fake()->paragraph(),
-            'geo_summary' => 'New York City news and culture.',
+            'geo_summary' => 'Current New York City news and culture summarized clearly for local readers.',
             'schema_type' => 'NewsArticle',
         ];
     }

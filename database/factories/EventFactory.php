@@ -27,7 +27,7 @@ class EventFactory extends Factory
             'timezone' => 'America/New_York',
             'meta_title' => fake()->sentence(),
             'meta_description' => fake()->paragraph(),
-            'geo_summary' => 'An event in New York City.',
+            'geo_summary' => 'A New York City event with practical details for local visitors.',
         ];
     }
 }

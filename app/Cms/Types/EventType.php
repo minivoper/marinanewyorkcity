@@ -4,7 +4,8 @@ namespace App\Cms\Types;
 
 use App\Models\Event;
 use Eshlink\Cms\Contracts\ContentSource;
-use Eshlink\Cms\Rules\SafeHtml;
+use Eshlink\Cms\Rules\NoDashes;
+use Eshlink\Cms\Rules\WordBand;
 use Eshlink\Cms\Schema\Fields\DateTime;
 use Eshlink\Cms\Schema\Fields\Repeater;
 use Eshlink\Cms\Schema\Fields\RichText;
@@ -57,8 +58,7 @@ class EventType extends BaseType
             Text::make('title')->required()->max(255),
             Slug::make('slug')->from('title'),
             Textarea::make('excerpt')->required()->max(1000)->rows(4),
-            RichText::make('body')->required()->sanitizeOnSave(false)->max(200000)
-                ->governedBy(new SafeHtml),
+            RichText::make('body')->required()->sanitizeOnSave(false)->max(200000),
             Text::make('cover_path')->max(255)
                 ->help('Path under public/, e.g. media/events/example.jpg.'),
             Text::make('venue_name')->required()->max(255),
@@ -104,10 +104,28 @@ class EventType extends BaseType
                         'occurrence_slug' => 'occurrence_slug',
                     ],
                     keyField: 'id',
+                    identityField: 'occurrence_slug',
                 ),
             ],
             slugColumn: 'slug',
             titleColumn: 'title',
         );
+    }
+
+    public function rules(): array
+    {
+        return [
+            new NoDashes([
+                'title',
+                'excerpt',
+                'body',
+                'venue_name',
+                'venue_address',
+                'meta_title',
+                'meta_description',
+                'geo_summary',
+            ]),
+            new WordBand(10, 30, ['geo_summary']),
+        ];
     }
 }

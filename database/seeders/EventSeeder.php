@@ -59,7 +59,7 @@ class EventSeeder extends Seeder
                 'venue_name' => 'Bryant Park',
                 'venue_address' => 'Bryant Park, New York, NY 10018',
                 'timezone' => 'America/New_York',
-                'meta_title' => 'The Knights at Bryant Park — July 3, 2026',
+                'meta_title' => 'The Knights at Bryant Park | July 3, 2026',
                 'meta_description' => 'See The Knights in a free Carnegie Hall Citywide concert at Bryant Park on July 3, 2026.',
                 'geo_summary' => 'A free outdoor Carnegie Hall Citywide concert in Bryant Park, Midtown Manhattan.',
                 'occurrences' => [[

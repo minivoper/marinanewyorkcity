@@ -4,13 +4,14 @@ namespace App\Cms\Types;
 
 use App\Models\Page;
 use Eshlink\Cms\Contracts\ContentSource;
-use Eshlink\Cms\Rules\SafeHtml;
+use Eshlink\Cms\Rules\NoDashes;
 use Eshlink\Cms\Schema\Fields\RichText;
 use Eshlink\Cms\Schema\Fields\Slug;
 use Eshlink\Cms\Schema\Fields\Text;
 use Eshlink\Cms\Schema\Fields\Textarea;
 use Eshlink\Cms\Schema\Schema;
 use Eshlink\Cms\Sources\ModelSource;
+use Eshlink\Cms\Support\Html;
 
 /**
  * Marina's long-form pages — privacy policy, terms, about, work with me,
@@ -55,11 +56,16 @@ class PageType extends BaseType
             Slug::make('slug')->from('title')
                 ->help('The address of the page. Changing it breaks links people have already saved.'),
             RichText::make('body')->required()->sanitizeOnSave(false)->max(200000)
-                ->governedBy(new SafeHtml)
+                ->allow(array_keys(Html::ALLOWED))
                 ->help('The page copy. Markup outside the allowlist is refused by name rather than quietly stripped.'),
             Text::make('meta_title')->required()->max(255),
             Textarea::make('meta_description')->required()->max(320)->rows(3),
         ]);
+    }
+
+    public function rules(): array
+    {
+        return [new NoDashes(['title', 'meta_title', 'meta_description'])];
     }
 
     public function source(): ContentSource

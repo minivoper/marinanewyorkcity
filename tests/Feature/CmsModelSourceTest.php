@@ -3,11 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\Event;
+use App\Models\EventOccurrence;
 use App\Models\Post;
 use App\Models\Setting;
 use Eshlink\Cms\Services\EntryService;
 use Eshlink\Cms\Support\TypeRegistry;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -99,6 +102,107 @@ class CmsModelSourceTest extends TestCase
         );
         $this->get('/event-details/bryant-park-movie-nights-2026-10-05')->assertOk();
         $this->get('/event-details/bryant-park-movie-nights-2026-09-28')->assertNotFound();
+    }
+
+    public function test_every_imported_post_and_page_can_be_saved_after_one_time_normalization(): void
+    {
+        $this->seed();
+
+        $exit = Artisan::call('cms:normalize-content', ['--type' => ['post', 'page']]);
+        $this->assertSame(0, $exit, Artisan::output());
+
+        $entries = app(EntryService::class);
+        $types = app(TypeRegistry::class);
+
+        foreach (['post' => 7, 'page' => 5] as $key => $expected) {
+            $type = $types->get($key);
+            $records = $entries->list($type);
+
+            $this->assertCount($expected, $records);
+
+            foreach ($records as $record) {
+                $updated = $entries->update($type, $record['id'], ['body' => $record['data']['body']], [
+                    'base_revision_id' => $record['current_version'],
+                ]);
+
+                $this->assertSame($record['data']['body'], $updated['data']['body']);
+            }
+        }
+    }
+
+    public function test_a_typed_local_event_time_and_an_untouched_resave_are_byte_stable(): void
+    {
+        $this->seed();
+
+        $event = Event::query()->where('slug', 'bryant-park-movie-nights')->firstOrFail();
+        $entries = app(EntryService::class);
+        $type = app(TypeRegistry::class)->get('event');
+        $entry = $entries->find($type, (string) $event->id);
+        $occurrences = $entry['data']['occurrences'];
+        $occurrences[0]['starts_at'] = '2026-07-13T19:30';
+
+        $updated = $entries->update($type, $entry['id'], ['occurrences' => $occurrences], [
+            'base_revision_id' => $entry['current_version'],
+        ]);
+        $entries->publish($type, $entry['id'], ['base_revision_id' => $updated['current_version']]);
+
+        $firstBytes = DB::table('event_occurrences')
+            ->where('event_id', $event->id)
+            ->orderBy('id')
+            ->pluck('starts_at')
+            ->all();
+
+        $this->assertSame('2026-07-13 19:30:00', $firstBytes[0]);
+
+        $entry = $entries->find($type, (string) $event->id);
+        $this->assertSame('2026-07-13T19:30:00-04:00', $entry['data']['occurrences'][0]['starts_at']);
+
+        $updated = $entries->update($type, $entry['id'], ['occurrences' => $entry['data']['occurrences']], [
+            'base_revision_id' => $entry['current_version'],
+        ]);
+        $entries->publish($type, $entry['id'], ['base_revision_id' => $updated['current_version']]);
+
+        $secondBytes = DB::table('event_occurrences')
+            ->where('event_id', $event->id)
+            ->orderBy('id')
+            ->pluck('starts_at')
+            ->all();
+
+        $this->assertSame($firstBytes, $secondBytes);
+    }
+
+    public function test_a_reverted_event_matches_a_replacement_occurrence_by_its_public_slug(): void
+    {
+        $this->seed();
+
+        $event = Event::query()->where('slug', 'bryant-park-movie-nights')->firstOrFail();
+        $entries = app(EntryService::class);
+        $type = app(TypeRegistry::class)->get('event');
+        $entry = $entries->find($type, (string) $event->id);
+
+        $updated = $entries->update($type, $entry['id'], ['excerpt' => $entry['data']['excerpt']], [
+            'base_revision_id' => $entry['current_version'],
+        ]);
+        $published = $entries->publish($type, $entry['id'], ['base_revision_id' => $updated['current_version']]);
+
+        $original = $event->occurrences()->orderBy('id')->firstOrFail();
+        $attributes = $original->only(['starts_at', 'ends_at', 'occurrence_slug']);
+        $originalId = $original->id;
+        $original->delete();
+        $replacement = $event->occurrences()->create($attributes);
+
+        $this->assertNotSame($originalId, $replacement->id);
+
+        $reverted = $entries->revert($type, $entry['id'], 1, [
+            'base_revision_id' => $published['current_version'],
+        ]);
+        $entries->publish($type, $entry['id'], ['base_revision_id' => $reverted['current_version']]);
+
+        $this->assertDatabaseHas('event_occurrences', [
+            'id' => $replacement->id,
+            'occurrence_slug' => $replacement->occurrence_slug,
+        ]);
+        $this->assertSame(12, EventOccurrence::query()->where('event_id', $event->id)->count());
     }
 
     /**

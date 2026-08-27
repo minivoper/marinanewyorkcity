@@ -38,7 +38,7 @@ class PageSeeder extends Seeder
 <p>The site may use standard hosting logs and analytics to understand visits, maintain security, and improve content. Third-party sites linked from this website have their own privacy practices.</p>
 <p>For privacy questions or requests, contact info@marinanewyorkcity.com.</p>
 HTML,
-                'meta_title' => 'Privacy Policy — marina.newyorkcity',
+                'meta_title' => 'Privacy Policy | marina.newyorkcity',
                 'meta_description' => 'Privacy policy for Marina New York City and marinanewyorkcity.com, effective May 27, 2026.',
             ],
             [
@@ -50,7 +50,7 @@ HTML,
 <p>Unless otherwise stated, the site’s original writing, video, and photography may not be reproduced, licensed, or used commercially without permission. Links to third-party services do not constitute control of or responsibility for those services.</p>
 <p>For permissions, licensing, or questions about these terms, contact info@marinanewyorkcity.com.</p>
 HTML,
-                'meta_title' => 'Terms and Conditions — marina.newyorkcity',
+                'meta_title' => 'Terms and Conditions | marina.newyorkcity',
                 'meta_description' => 'Terms and conditions for Marina New York City and marinanewyorkcity.com, effective May 27, 2026.',
             ],
             [
@@ -67,7 +67,7 @@ HTML,
 <h3>How can I license Marina’s footage?</h3>
 <p>For footage licensing, partnerships, and press inquiries, email info@marinanewyorkcity.com.</p>
 HTML,
-                'meta_title' => 'About Marina Kapler — NYC Content Creator',
+                'meta_title' => 'About Marina Kapler | NYC Content Creator',
                 'meta_description' => 'Meet Marina Kapler, the New York City creator and visual storyteller behind @marina.newyorkcity.',
             ],
             [
@@ -82,7 +82,7 @@ HTML,
 <h2>Footage licensing</h2>
 <p>Existing New York City footage may be licensed for editorial or commercial use. Contact info@marinanewyorkcity.com with the project, channels, territory, and desired usage period.</p>
 HTML,
-                'meta_title' => 'Work with Marina Kapler — NYC Brand Storytelling',
+                'meta_title' => 'Work with Marina Kapler | NYC Brand Storytelling',
                 'meta_description' => 'Partner with Marina Kapler for cinematic NYC storytelling, luxury and tech campaigns, production add-ons, and footage licensing.',
             ],
             [
@@ -102,7 +102,7 @@ HTML,
 </ul>
 <p>For interviews, media requests, or licensing, email info@marinanewyorkcity.com.</p>
 HTML,
-                'meta_title' => 'Press — Marina Kapler and marina.newyorkcity',
+                'meta_title' => 'Press | Marina Kapler and marina.newyorkcity',
                 'meta_description' => 'Press facts, official profiles, and media contact information for Marina Kapler and marina.newyorkcity.',
             ],
         ];

@@ -9,6 +9,7 @@ use Eshlink\Cms\Models\CmsSetting;
 use Eshlink\Cms\Services\EntryService;
 use Eshlink\Cms\Support\TypeRegistry;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class CmsContentTypeTest extends TestCase
@@ -70,6 +71,33 @@ class CmsContentTypeTest extends TestCase
             'edited by marina',
             $home->locate($type, null)['published_data']['hero_heading'],
         );
+    }
+
+    public function test_marinas_dash_and_geo_word_band_rules_are_enforced_on_drafts(): void
+    {
+        $this->artisan('cms:install', ['--seed-defaults' => true])->assertSuccessful();
+
+        $entries = app(EntryService::class);
+        $home = app(TypeRegistry::class)->get('home');
+        $entry = $entries->locate($home, null);
+
+        try {
+            $entries->update($home, $entry['id'], ['hero_heading' => 'new york — where magic begins'], [
+                'base_revision_id' => $entry['current_version'],
+            ]);
+            $this->fail('Expected the home heading dash to be refused.');
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('no_dashes', $exception->errors()['hero_heading'][0]);
+        }
+
+        $post = app(TypeRegistry::class)->get('post');
+
+        try {
+            $entries->create($post, ['geo_summary' => 'Too short']);
+            $this->fail('Expected the GEO summary word band to be refused.');
+        } catch (ValidationException $exception) {
+            $this->assertStringContainsString('word_band', $exception->errors()['geo_summary'][0]);
+        }
     }
 
     /**

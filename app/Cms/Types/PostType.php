@@ -4,7 +4,8 @@ namespace App\Cms\Types;
 
 use App\Models\Post;
 use Eshlink\Cms\Contracts\ContentSource;
-use Eshlink\Cms\Rules\SafeHtml;
+use Eshlink\Cms\Rules\NoDashes;
+use Eshlink\Cms\Rules\WordBand;
 use Eshlink\Cms\Schema\Fields\DateTime;
 use Eshlink\Cms\Schema\Fields\Number;
 use Eshlink\Cms\Schema\Fields\RichText;
@@ -14,6 +15,7 @@ use Eshlink\Cms\Schema\Fields\Text;
 use Eshlink\Cms\Schema\Fields\Textarea;
 use Eshlink\Cms\Schema\Schema;
 use Eshlink\Cms\Sources\ModelSource;
+use Eshlink\Cms\Support\Html;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -63,7 +65,7 @@ class PostType extends BaseType
             ])->help('News shows under "What\'s going on" and on News and Press; guides show under "NYC guides".'),
             Textarea::make('excerpt')->required()->max(1000)->rows(4),
             RichText::make('body')->required()->sanitizeOnSave(false)->max(200000)
-                ->governedBy(new SafeHtml),
+                ->allow(array_keys(Html::ALLOWED)),
             Text::make('cover_path')->max(255)
                 ->help('Path under public/, e.g. media/posts/example.jpg.'),
             DateTime::make('published_at')
@@ -79,6 +81,14 @@ class PostType extends BaseType
                 'Article' => 'Article',
             ]),
         ]);
+    }
+
+    public function rules(): array
+    {
+        return [
+            new NoDashes(['title', 'excerpt', 'meta_title', 'meta_description', 'geo_summary', 'location_name']),
+            new WordBand(10, 30, ['geo_summary']),
+        ];
     }
 
     public function source(): ContentSource

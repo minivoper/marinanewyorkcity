@@ -60,7 +60,8 @@ theme CSS tokens were transcribed into `docs/wix-ref/`. All images were download
 locally into `public/media/` (`brand/`, `about/`, `posts/`, `events/`, `shop/`, `travel/`,
 `instagram/` — the Instagram folder holds ~25 snapshot JPGs of recent posts). The three
 Wix-hosted webfonts (Arial Black, Avenir LT 35 Light, DIN Next Light) were saved as
-woff2 in `public/fonts/` and preloaded in the layout. Nothing hotlinks to Wix.
+woff2 in `public/fonts/` and preloaded in the layout. Most harvested media is local;
+the remaining Wix CDN images embedded inside imported HTML are tracked below.
 
 ## Design notes
 
@@ -103,3 +104,4 @@ Then open http://127.0.0.1:8001.
 
 1. **DNS**: marinanewyorkcity.com is still attached to Canva. Point it at Laravel Cloud (add the custom domain in the Cloud dashboard, update DNS), after which the canonical URLs in sitemap/feeds/llms.txt become correct.
 2. **Visual polish**: layout is close to the Wix draft but not pixel-identical — spacing, hover states, and some section compositions could be tightened against the Wix reference.
+3. **Media migration**: move the remaining images embedded in imported post/page HTML off `static.wixstatic.com` and into the local media pipeline, then replace their hot-linked URLs and add meaningful alt text. The links still render today, so this is tracked here rather than changed as part of the CMS bug fixes.

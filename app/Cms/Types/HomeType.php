@@ -2,6 +2,7 @@
 
 namespace App\Cms\Types;
 
+use Eshlink\Cms\Rules\NoDashes;
 use Eshlink\Cms\Rules\SafeHtml;
 use Eshlink\Cms\Schema\Fields\Repeater;
 use Eshlink\Cms\Schema\Fields\RichText;
@@ -37,7 +38,8 @@ class HomeType extends PageSingleton
             Text::make('hero_image')->required()->max(255)
                 ->help('Path under public/, e.g. media/posts/example.jpg.'),
             Text::make('hero_image_alt')->required()->max(255),
-            Text::make('hero_heading')->required()->max(120),
+            Text::make('hero_heading')->required()->max(120)
+                ->governedBy(new NoDashes),
             Text::make('hero_subheading')->required()->max(255),
 
             Text::make('news_heading')->required()->max(120),
@@ -50,20 +52,20 @@ class HomeType extends PageSingleton
             Text::make('social_image_alt')->required()->max(255),
             Text::make('social_heading')->required()->max(120),
             RichText::make('social_body')->required()->sanitizeOnSave(false)->max(20000)
-                ->governedBy(new SafeHtml),
+                ->governedBy(new SafeHtml, new NoDashes),
 
             Text::make('licensing_image')->required()->max(255),
             Text::make('licensing_image_alt')->required()->max(255),
             Text::make('licensing_heading')->required()->max(120),
             RichText::make('licensing_body')->required()->sanitizeOnSave(false)->max(20000)
-                ->governedBy(new SafeHtml),
+                ->governedBy(new SafeHtml, new NoDashes),
             Text::make('licensing_cta_label')->required()->max(60),
 
             Text::make('about_image')->required()->max(255),
             Text::make('about_image_alt')->required()->max(255),
             Text::make('about_heading')->required()->max(120),
             RichText::make('about_body')->required()->sanitizeOnSave(false)->max(20000)
-                ->governedBy(new SafeHtml),
+                ->governedBy(new SafeHtml, new NoDashes),
 
             Text::make('instagram_heading')->required()->max(120),
 

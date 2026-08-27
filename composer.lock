@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95adbf24e6c5566e076b403b935de774",
+    "content-hash": "e05cb9d0712dc24cc6a7221a38ebc890",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2627,11 +2627,17 @@
         },
         {
             "name": "minivoper/eshlink-cms",
-            "version": "dev-main",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:minivoper/eshlink-cms.git",
+                "reference": "d423ef271e4d241f9a5c6be8ec60f935d6da2d41"
+            },
             "dist": {
-                "type": "path",
-                "url": "../eshlink-cms",
-                "reference": "4a1cc30afe893490783e575e8e438eb3156d4f2c"
+                "type": "zip",
+                "url": "https://api.github.com/repos/minivoper/eshlink-cms/zipball/d423ef271e4d241f9a5c6be8ec60f935d6da2d41",
+                "reference": "d423ef271e4d241f9a5c6be8ec60f935d6da2d41",
+                "shasum": ""
             },
             "require": {
                 "bacon/bacon-qr-code": "^3.0",
@@ -2717,10 +2723,11 @@
                 "laravel",
                 "mcp"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/minivoper/eshlink-cms/tree/v0.1.0",
+                "issues": "https://github.com/minivoper/eshlink-cms/issues"
+            },
+            "time": "2026-08-27T09:43:48+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -9643,9 +9650,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "minivoper/eshlink-cms": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

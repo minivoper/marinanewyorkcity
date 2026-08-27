@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e05cb9d0712dc24cc6a7221a38ebc890",
+    "content-hash": "f8ce81152c68807c07d07f0f3d4361ea",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1815,6 +1815,69 @@
             "time": "2026-08-20T12:55:36+00:00"
         },
         {
+            "name": "laravel/sanctum",
+            "version": "v4.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/sanctum.git",
+                "reference": "fee27a573d1a013af3721d86153a65e0b11927e6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/sanctum/zipball/fee27a573d1a013af3721d86153a65e0b11927e6",
+                "reference": "fee27a573d1a013af3721d86153a65e0b11927e6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/console": "^11.0|^12.0|^13.0",
+                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "illuminate/database": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "php": "^8.2",
+                "symfony/console": "^7.0|^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.6",
+                "orchestra/testbench": "^9.15|^10.8|^11.0",
+                "phpstan/phpstan": "^1.10"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Sanctum\\SanctumServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Sanctum\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Laravel Sanctum provides a featherweight authentication system for SPAs and simple APIs.",
+            "keywords": [
+                "auth",
+                "laravel",
+                "sanctum"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/sanctum/issues",
+                "source": "https://github.com/laravel/sanctum"
+            },
+            "time": "2026-06-23T18:26:55+00:00"
+        },
+        {
             "name": "laravel/serializable-closure",
             "version": "v2.0.16",
             "source": {
@@ -2627,16 +2690,16 @@
         },
         {
             "name": "minivoper/eshlink-cms",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minivoper/eshlink-cms.git",
-                "reference": "48d429cfee46a1974009b55859f74d7d31a4e607"
+                "reference": "9714d1f6fee60e33ad77770df7467d1132c5a95f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minivoper/eshlink-cms/zipball/48d429cfee46a1974009b55859f74d7d31a4e607",
-                "reference": "48d429cfee46a1974009b55859f74d7d31a4e607",
+                "url": "https://api.github.com/repos/minivoper/eshlink-cms/zipball/9714d1f6fee60e33ad77770df7467d1132c5a95f",
+                "reference": "9714d1f6fee60e33ad77770df7467d1132c5a95f",
                 "shasum": ""
             },
             "require": {
@@ -2659,20 +2722,21 @@
                 "illuminate/view": "^13.0",
                 "intervention/image": "^3.11",
                 "laravel/mcp": "0.9.4",
+                "laravel/sanctum": "^4.0",
                 "league/flysystem-aws-s3-v3": "^3.29",
                 "php": "^8.3",
                 "pragmarx/google2fa": "^8.0",
                 "symfony/html-sanitizer": "^7.2"
             },
             "require-dev": {
+                "laravel/passport": "^13.0",
                 "laravel/pint": "^1.20",
                 "orchestra/testbench": "^11.0",
                 "phpunit/phpunit": "^12.0"
             },
             "suggest": {
                 "ext-gd": "Required by intervention/image's default driver. ext-imagick works too; set cms.media.driver.",
-                "laravel/passport": "Required only for OAuth 2.1 MCP connectors (claude.ai). laravel/mcp works with Sanctum bearer tokens without it; Mcp::oauthRoutes() and Registrar OAuth helpers need it.",
-                "laravel/sanctum": "Phase 2 MCP auth: personal access tokens with ability scopes."
+                "laravel/passport": "^13.0 — needed only for the OAuth lane (claude.ai and ChatGPT custom connectors, which cannot hold a static bearer header). Claude Code works without it. Install it, set CMS_MCP_OAUTH_ENABLED=true, add a `cms-oauth` guard: see docs/mcp-oauth.md."
             },
             "type": "library",
             "extra": {
@@ -2724,10 +2788,10 @@
                 "mcp"
             ],
             "support": {
-                "source": "https://github.com/minivoper/eshlink-cms/tree/v0.1.1",
+                "source": "https://github.com/minivoper/eshlink-cms/tree/v0.2.0",
                 "issues": "https://github.com/minivoper/eshlink-cms/issues"
             },
-            "time": "2026-08-27T14:59:11+00:00"
+            "time": "2026-08-27T21:46:46+00:00"
         },
         {
             "name": "monolog/monolog",

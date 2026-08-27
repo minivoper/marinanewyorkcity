@@ -2,6 +2,7 @@
 
 namespace App\Cms\Types;
 
+use Eshlink\Cms\Schema\Fields\Image;
 use Eshlink\Cms\Schema\Fields\Text;
 use Eshlink\Cms\Schema\Fields\Textarea;
 use Eshlink\Cms\Schema\Schema;
@@ -30,10 +31,12 @@ class TravelUsaType extends PageSingleton
     {
         return Schema::make([
             Text::make('heading')->required()->max(120),
-            Text::make('video_poster')->required()->max(255)
-                ->help('Path under public/ to the still shown while the video loads.'),
+            Image::make('video_poster')->storesPath()->required()->max(255)
+                ->withLabel('Still picture, shown while the film loads')
+                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
             Text::make('video_path')->required()->max(255)
-                ->help('Path under public/ to the looping MP4.'),
+                ->withLabel('The looping film')
+                ->help('The film that plays behind this section. Films are not kept in your photo library, so this one is set by the site.'),
             Text::make('seo_title')->required()->max(255),
             Textarea::make('seo_description')->required()->max(320)->rows(3),
         ]);

@@ -8,6 +8,7 @@ use Eshlink\Cms\Contracts\PubliclyRoutable;
 use Eshlink\Cms\Rules\NoDashes;
 use Eshlink\Cms\Rules\WordBand;
 use Eshlink\Cms\Schema\Fields\DateTime;
+use Eshlink\Cms\Schema\Fields\Image;
 use Eshlink\Cms\Schema\Fields\Number;
 use Eshlink\Cms\Schema\Fields\RichText;
 use Eshlink\Cms\Schema\Fields\Select;
@@ -95,8 +96,9 @@ class PostType extends BaseType implements PubliclyRoutable
             Textarea::make('excerpt')->required()->max(1000)->rows(4),
             RichText::make('body')->required()->sanitizeOnSave(false)->max(200000)
                 ->allow(array_keys(Html::ALLOWED)),
-            Text::make('cover_path')->max(255)
-                ->help('Path under public/, e.g. media/posts/example.jpg.'),
+            Image::make('cover_path')->storesPath()->max(255)
+                ->withLabel('Cover picture')
+                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
             DateTime::make('published_at')
                 ->help('A date in the future keeps the story off the site until it arrives.'),
             Number::make('read_minutes')->integer()->min(1)->max(240),

@@ -5,6 +5,7 @@ namespace App\Cms\Sources;
 use App\Models\Setting;
 use Eshlink\Cms\Contracts\ContentSource;
 use Eshlink\Cms\Contracts\ContentType;
+use Eshlink\Cms\Contracts\SavesImmediately;
 use Eshlink\Cms\Exceptions\StaleRevisionException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -34,7 +35,7 @@ use InvalidArgumentException;
  * that would do nothing. This is the one content type on the site that works
  * that way, and it works that way because it is not content.
  */
-class SiteSettingsSource implements ContentSource
+class SiteSettingsSource implements ContentSource, SavesImmediately
 {
     /**
      * The single row's id. Settings are one thing, so it is a constant rather

@@ -4,6 +4,7 @@ namespace App\Cms\Types;
 
 use Eshlink\Cms\Rules\NoDashes;
 use Eshlink\Cms\Rules\SafeHtml;
+use Eshlink\Cms\Schema\Fields\Image;
 use Eshlink\Cms\Schema\Fields\Repeater;
 use Eshlink\Cms\Schema\Fields\RichText;
 use Eshlink\Cms\Schema\Fields\Text;
@@ -45,8 +46,9 @@ class HomeType extends PageSingleton
     public function schema(): Schema
     {
         return Schema::make([
-            Text::make('hero_image')->required()->max(255)
-                ->help('Path under public/, e.g. media/posts/example.jpg.'),
+            Image::make('hero_image')->storesPath()->required()->max(255)
+                ->withLabel('The big picture at the top')
+                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
             Text::make('hero_image_alt')->required()->max(255),
             Text::make('hero_heading')->required()->max(120)
                 ->governedBy(new NoDashes),

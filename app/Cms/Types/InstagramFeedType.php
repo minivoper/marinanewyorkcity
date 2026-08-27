@@ -2,6 +2,7 @@
 
 namespace App\Cms\Types;
 
+use Eshlink\Cms\Schema\Fields\Image;
 use Eshlink\Cms\Schema\Fields\Number;
 use Eshlink\Cms\Schema\Fields\Repeater;
 use Eshlink\Cms\Schema\Fields\Text;
@@ -46,8 +47,9 @@ class InstagramFeedType extends PageSingleton
             Repeater::make('items')->max(60)->of(Schema::make([
                 Number::make('index')->integer()->min(1)
                     ->help('Only used in the tile\'s accessible label, e.g. "Instagram post 7".'),
-                Text::make('path')->required()->max(255)
-                    ->help('Path under public/, e.g. media/instagram/ig-01.jpg.'),
+                Image::make('path')->storesPath()->required()->max(255)
+                    ->withLabel('The picture')
+                    ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
                 Text::make('alt')->required()->max(255)
                     ->help('What the picture shows, for anyone who cannot see it.'),
             ])),

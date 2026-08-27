@@ -8,6 +8,7 @@ use Eshlink\Cms\Contracts\PubliclyRoutable;
 use Eshlink\Cms\Rules\NoDashes;
 use Eshlink\Cms\Rules\WordBand;
 use Eshlink\Cms\Schema\Fields\DateTime;
+use Eshlink\Cms\Schema\Fields\Image;
 use Eshlink\Cms\Schema\Fields\Repeater;
 use Eshlink\Cms\Schema\Fields\RichText;
 use Eshlink\Cms\Schema\Fields\Slug;
@@ -85,8 +86,9 @@ class EventType extends BaseType implements PubliclyRoutable
             Slug::make('slug')->from('title'),
             Textarea::make('excerpt')->required()->max(1000)->rows(4),
             RichText::make('body')->required()->sanitizeOnSave(false)->max(200000),
-            Text::make('cover_path')->max(255)
-                ->help('Path under public/, e.g. media/events/example.jpg.'),
+            Image::make('cover_path')->storesPath()->max(255)
+                ->withLabel('Cover picture')
+                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
             Text::make('venue_name')->required()->max(255),
             Text::make('venue_address')->required()->max(255),
             Text::make('timezone')->required()->max(255),

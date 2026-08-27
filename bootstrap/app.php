@@ -4,6 +4,7 @@ use Eshlink\Cms\CmsServiceProvider;
 use Eshlink\Cms\Http\Middleware\BlockCrawlers;
 use Eshlink\Cms\Http\Middleware\PreviewGate;
 use Eshlink\Cms\Http\Middleware\PreviewToLiveRedirect;
+use Eshlink\Cms\Support\AdminErrorPages;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -53,4 +54,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        /*
+         * The admin's own refusal, expiry and not-found screens, on the admin
+         * host only.
+         *
+         * Same shape and the same promise as the no-index registration above:
+         * AdminErrorPages asks HostMode which host answered, renders a CMS
+         * screen for the admin host and returns null for every other host, so
+         * a dead link on marinanewyorkcity.com is still answered by Laravel's
+         * own page, byte for byte. AdminErrorPagesTest holds both halves.
+         */
+        AdminErrorPages::register($exceptions);
     })->create();

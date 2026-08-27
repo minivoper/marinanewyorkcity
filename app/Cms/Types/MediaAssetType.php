@@ -4,6 +4,7 @@ namespace App\Cms\Types;
 
 use App\Models\MediaAsset;
 use Eshlink\Cms\Contracts\ContentSource;
+use Eshlink\Cms\Schema\Fields\Image;
 use Eshlink\Cms\Schema\Fields\Number;
 use Eshlink\Cms\Schema\Fields\Text;
 use Eshlink\Cms\Schema\Fields\Url;
@@ -59,8 +60,9 @@ class MediaAssetType extends BaseType
     public function schema(): Schema
     {
         return Schema::make([
-            Text::make('path')->required()->max(255)
-                ->help('Path under public/, e.g. media/posts/example.jpg.'),
+            Image::make('path')->storesPath()->required()->max(255)
+                ->withLabel('The picture')
+                ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
             Text::make('alt')->required()->max(255)
                 ->help('What the picture shows, for anyone who cannot see it.'),
             Text::make('credit')->max(255),

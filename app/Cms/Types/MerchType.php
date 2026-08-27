@@ -2,6 +2,7 @@
 
 namespace App\Cms\Types;
 
+use Eshlink\Cms\Schema\Fields\Image;
 use Eshlink\Cms\Schema\Fields\Repeater;
 use Eshlink\Cms\Schema\Fields\Text;
 use Eshlink\Cms\Schema\Fields\Textarea;
@@ -40,8 +41,9 @@ class MerchType extends PageSingleton
             Text::make('merch_heading')->required()->max(120),
             Repeater::make('merch_products')->max(24)->of(Schema::make([
                 Text::make('title')->required()->max(120),
-                Text::make('image')->required()->max(255)
-                    ->help('Path under public/, e.g. media/shop/example.jpeg.'),
+                Image::make('image')->storesPath()->required()->max(255)
+                    ->withLabel('The picture')
+                    ->help('Choose one from your photos. The picture that is there now still works, so you can leave it as it is.'),
                 Text::make('alt')->required()->max(255),
             ])),
             Text::make('merch_cta_label')->required()->max(60),

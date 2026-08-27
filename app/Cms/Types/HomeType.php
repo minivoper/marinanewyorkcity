@@ -27,9 +27,19 @@ class HomeType extends PageSingleton
         return 'home';
     }
 
+    /**
+     * What Marina's own navigation calls it. The admin writes this into prose
+     * ("New home", "a home"), so it stays a plain noun with no "page" bolted
+     * on: she has never once called it "the Home page".
+     */
     public function label(): string
     {
-        return 'Home page';
+        return 'Home';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'The first thing people see.';
     }
 
     public function schema(): Schema
@@ -179,5 +189,15 @@ HTML,
             static fn (string $file): array => ['file' => $file, 'alt' => 'Client and partner logo'],
             $files,
         );
+    }
+
+    /**
+     * The home page, at the site root.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/';
     }
 }

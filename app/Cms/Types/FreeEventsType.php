@@ -22,7 +22,12 @@ class FreeEventsType extends PageSingleton
 
     public function label(): string
     {
-        return 'Free Events page';
+        return 'Free Events';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'The free things happening around the city.';
     }
 
     public function schema(): Schema
@@ -49,5 +54,13 @@ class FreeEventsType extends PageSingleton
             'seo_title' => 'FREE EVENTS | marina.newyorkcity',
             'seo_description' => 'Free New York City events selected by Marina Kapler.',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/free-events';
     }
 }

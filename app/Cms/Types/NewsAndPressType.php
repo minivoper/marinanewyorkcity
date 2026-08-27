@@ -21,7 +21,12 @@ class NewsAndPressType extends PageSingleton
 
     public function label(): string
     {
-        return 'News and Press page';
+        return 'News & Press';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'Where your press coverage lives.';
     }
 
     public function schema(): Schema
@@ -46,5 +51,13 @@ class NewsAndPressType extends PageSingleton
             'seo_title' => 'NEWS AND PRESS | marina.newyorkcity',
             'seo_description' => 'New York City news and press releases by Marina Kapler.',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/news-and-press';
     }
 }

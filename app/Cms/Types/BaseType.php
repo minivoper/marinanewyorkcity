@@ -4,6 +4,7 @@ namespace App\Cms\Types;
 
 use Eshlink\Cms\Contracts\ContentRule;
 use Eshlink\Cms\Contracts\ContentType;
+use Eshlink\Cms\Contracts\Presentable;
 
 /**
  * Shared answers for the parts of the {@see ContentType} contract that are the
@@ -13,8 +14,13 @@ use Eshlink\Cms\Contracts\ContentType;
  * those are the four things that actually differ between a blog post and the
  * home page. Everything else has one obviously correct answer here and is
  * overridden where it is not.
+ *
+ * {@see Presentable} is implemented here rather than type by type so that every
+ * type this site declares is guaranteed to answer the admin's three questions,
+ * even if the answer is "nothing in particular". Marina never sees a card whose
+ * blurb is a stray `null` on one type and a sentence on its neighbour.
  */
-abstract class BaseType implements ContentType
+abstract class BaseType implements ContentType, Presentable
 {
     public function pluralLabel(): string
     {
@@ -24,6 +30,37 @@ abstract class BaseType implements ContentType
     public function isSingleton(): bool
     {
         return false;
+    }
+
+    /**
+     * Nothing rather than something generic. A card that says "A content type"
+     * under its name has spent a line of the screen telling her what she
+     * already knew; every type that has something worth saying says it.
+     */
+    public function blurb(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Null defers to `SiteMap`, which sorts a singleton into Pages and
+     * everything else into Collections. That is right for most of this site
+     * and wrong only where a type is machinery — settings, the photo
+     * catalogue — which says so itself.
+     */
+    public function group(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Always null on this site. `SiteMap` puts the first letter of the label on
+     * the plate, and a letter Marina can read off the sidebar beats a symbol
+     * somebody chose for her.
+     */
+    public function glyph(): ?string
+    {
+        return null;
     }
 
     public function hasSlug(): bool

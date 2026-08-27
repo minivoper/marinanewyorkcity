@@ -3,7 +3,9 @@
 namespace App\Cms\Types;
 
 use Eshlink\Cms\Contracts\ContentSource;
+use Eshlink\Cms\Contracts\PubliclyRoutable;
 use Eshlink\Cms\Sources\EntrySource;
+use Eshlink\Cms\Support\SiteMap;
 
 /**
  * Base for the pages whose copy used to live as literals inside a Blade
@@ -19,7 +21,7 @@ use Eshlink\Cms\Sources\EntrySource;
  * pages, which are already editable through {@see PageType}; these eight were
  * never rows in it.
  */
-abstract class PageSingleton extends BaseType
+abstract class PageSingleton extends BaseType implements PubliclyRoutable
 {
     public function isSingleton(): bool
     {
@@ -30,4 +32,31 @@ abstract class PageSingleton extends BaseType
     {
         return new EntrySource;
     }
+
+    /**
+     * Every subclass of this IS one page of Marina's site — she can open it in
+     * a browser and point at it — so the group is settled here rather than
+     * restated nine times. Declared explicitly all the same: `SiteMap` would
+     * infer it from `isSingleton()`, but a page that stopped being a singleton
+     * would then quietly change groups, and that is not what "this is a page"
+     * means.
+     */
+    public function group(): ?string
+    {
+        return SiteMap::GROUP_PAGE;
+    }
+
+    /**
+     * Each of these IS one page, so each names the address its words are drawn
+     * at — which is what gives it a live preview pane in the editor. See
+     * {@see PubliclyRoutable}.
+     *
+     * The entry is ignored by every one of them: a singleton has no slug, and
+     * the route it renders at is a literal in `routes/web.php`. Declared
+     * abstract rather than guessed from the key, because "the address of the
+     * shop page" is a fact about this site's routes and nothing else.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    abstract public function publicPath(array $entry): ?string;
 }

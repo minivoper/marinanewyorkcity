@@ -12,8 +12,8 @@ use App\Cms\Types\MerchType;
 use App\Cms\Types\NewsAndPressType;
 use App\Cms\Types\PageType;
 use App\Cms\Types\PostType;
-use App\Cms\Types\SettingsType;
 use App\Cms\Types\ShopType;
+use App\Cms\Types\SiteSettingsType;
 use App\Cms\Types\TravelUsaType;
 
 return [
@@ -147,7 +147,12 @@ return [
         EventType::class,
         PageType::class,
         MediaAssetType::class,
-        SettingsType::class,
+
+        // The `settings` key/value table, as one form rather than five rows of
+        // JSON. `App\Cms\Types\SettingsType` used to list those rows here; it
+        // is gone, because two things called Settings in one admin is one more
+        // than anybody can hold in their head.
+        SiteSettingsType::class,
 
         // The eight pages whose copy used to be literals inside a Blade
         // template, plus the Instagram strip that used to be a disk read.
@@ -172,7 +177,7 @@ return [
     | under a list of content.
     */
 
-    'settings_type' => env('CMS_SETTINGS_TYPE', 'settings'),
+    'settings_type' => env('CMS_SETTINGS_TYPE', 'site_settings'),
 
     /*
     | Site-wide content rules, applied in addition to the rules a field

@@ -10,13 +10,18 @@ use Eshlink\Cms\Schema\Fields\Textarea;
 use Eshlink\Cms\Schema\Schema;
 
 /**
- * Marina's `settings` key/value table, wrapped.
+ * Marina's `settings` key/value table, wrapped one row at a time.
  *
- * It is a collection rather than the admin's single Settings screen because
- * that is what the table is: one row per key, each holding its own JSON value.
- * Pointing `cms.settings_type` at it would make the Settings screen edit
- * whichever row came back first, which is worse than the package's own "no
- * settings type declared" screen.
+ * NO LONGER REGISTERED. `config/cms.php` lists {@see SiteSettingsType} instead,
+ * which presents the same rows as one form of labelled boxes. This class showed
+ * them as five rows whose Value field was hand-written JSON, and a second thing
+ * called Settings in the sidebar besides — the admin now has exactly one.
+ *
+ * It is kept on disk, unlisted, because `tests/Feature/CmsModelSourceTest.php`
+ * still exercises it: `settings.value` is the one column on this site behind an
+ * `array` cast, and {@see SettingSource} is the only worked
+ * example of adapting a cast column to a scalar field schema. Delete both, and
+ * that test, together or not at all.
  */
 class SettingsType extends BaseType
 {

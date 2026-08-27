@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Cms\Types\SettingsType;
 use App\Models\Event;
 use App\Models\EventOccurrence;
 use App\Models\Post;
@@ -208,6 +209,12 @@ class CmsModelSourceTest extends TestCase
     /**
      * `settings.value` is a JSON column behind an Eloquent cast, so the field
      * an editor sees is JSON text and the model still hands back an array.
+     *
+     * Marina no longer edits settings this way — {@see SiteSettingsTest}
+     * covers the form of labelled boxes she actually gets, and `SettingsType` is
+     * no longer listed in `config/cms.php`. It is still the site's only worked
+     * example of adapting a cast column to a scalar field schema, so the type is
+     * built here directly rather than looked up in the registry.
      */
     public function test_a_setting_round_trips_through_its_json_column(): void
     {
@@ -217,7 +224,7 @@ class CmsModelSourceTest extends TestCase
         ]);
 
         $entries = app(EntryService::class);
-        $type = app(TypeRegistry::class)->get('setting');
+        $type = new SettingsType;
         $entry = $entries->find($type, (string) $setting->id);
 
         $this->assertSame(
@@ -241,7 +248,7 @@ class CmsModelSourceTest extends TestCase
         $setting = Setting::query()->create(['key' => 'site.name', 'value' => ['value' => 'marina.newyorkcity']]);
 
         $entries = app(EntryService::class);
-        $type = app(TypeRegistry::class)->get('setting');
+        $type = new SettingsType;
         $entry = $entries->find($type, (string) $setting->id);
 
         $this->expectException(ValidationException::class);

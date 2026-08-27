@@ -24,7 +24,12 @@ class ShopType extends PageSingleton
 
     public function label(): string
     {
-        return 'Shop page';
+        return 'Shop';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'What you sell, and where it goes.';
     }
 
     public function schema(): Schema
@@ -119,5 +124,13 @@ class ShopType extends PageSingleton
             'seo_title' => 'SHOP | marina.newyorkcity',
             'seo_description' => 'Digital products and New York merch by marina.newyorkcity.',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/shop';
     }
 }

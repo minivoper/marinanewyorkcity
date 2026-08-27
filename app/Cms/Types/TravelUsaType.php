@@ -18,7 +18,12 @@ class TravelUsaType extends PageSingleton
 
     public function label(): string
     {
-        return 'Travel USA page';
+        return 'Travel USA';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'Your travel guides across the country.';
     }
 
     public function schema(): Schema
@@ -46,5 +51,13 @@ class TravelUsaType extends PageSingleton
             'seo_title' => 'TRAVEL USA | marina.newyorkcity',
             'seo_description' => 'Cinematic travel stories from across the USA by Marina Kapler.',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/travel-usa';
     }
 }

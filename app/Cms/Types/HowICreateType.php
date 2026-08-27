@@ -24,7 +24,12 @@ class HowICreateType extends PageSingleton
 
     public function label(): string
     {
-        return 'How I Create page';
+        return 'How I Create';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'How you make the work, in your words.';
     }
 
     public function schema(): Schema
@@ -49,5 +54,13 @@ class HowICreateType extends PageSingleton
             'seo_title' => 'HOW I CREATE | marina.newyorkcity',
             'seo_description' => 'How Marina Kapler creates cinematic New York City content with an iPhone.',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/how-i-create';
     }
 }

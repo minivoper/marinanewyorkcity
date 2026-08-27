@@ -4,6 +4,7 @@ namespace App\Cms\Types;
 
 use App\Models\Post;
 use Eshlink\Cms\Contracts\ContentSource;
+use Eshlink\Cms\Contracts\PubliclyRoutable;
 use Eshlink\Cms\Rules\NoDashes;
 use Eshlink\Cms\Rules\WordBand;
 use Eshlink\Cms\Schema\Fields\DateTime;
@@ -16,6 +17,7 @@ use Eshlink\Cms\Schema\Fields\Textarea;
 use Eshlink\Cms\Schema\Schema;
 use Eshlink\Cms\Sources\ModelSource;
 use Eshlink\Cms\Support\Html;
+use Eshlink\Cms\Support\SiteMap;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -31,8 +33,25 @@ use Illuminate\Database\Eloquent\Builder;
  * `now()`, so a post dated in the future is scheduled rather than live, and
  * the CMS must read the site exactly as the site reads itself.
  */
-class PostType extends BaseType
+class PostType extends BaseType implements PubliclyRoutable
 {
+    /**
+     * `/post/{slug}` — the one route both news and guides render at, whichever
+     * listing they appear in.
+     *
+     * The posted slug wins over the stored one, so renaming a story and
+     * looking at it shows the story at its new address. A story with no slug
+     * at all has no address yet, and null is the honest answer.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        $slug = $entry['data']['slug'] ?? $entry['slug'] ?? null;
+
+        return is_string($slug) && $slug !== '' ? '/post/'.$slug : null;
+    }
+
     public function key(): string
     {
         return 'post';
@@ -45,7 +64,17 @@ class PostType extends BaseType
 
     public function pluralLabel(): string
     {
-        return 'News and guides';
+        return 'Stories';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'Your news posts and your city guides.';
+    }
+
+    public function group(): ?string
+    {
+        return SiteMap::GROUP_COLLECTION;
     }
 
     public function hasSlug(): bool

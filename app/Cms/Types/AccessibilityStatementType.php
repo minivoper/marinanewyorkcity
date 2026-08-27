@@ -29,7 +29,12 @@ class AccessibilityStatementType extends PageSingleton
 
     public function label(): string
     {
-        return 'Accessibility Statement page';
+        return 'Accessibility';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'Your promise about who can use this site.';
     }
 
     public function schema(): Schema
@@ -107,5 +112,13 @@ HTML,
             'seo_title' => 'ACCESSIBILITY STATEMENT | marina.newyorkcity',
             'seo_description' => 'Accessibility statement for marinanewyorkcity.com.',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/accessibility-statement';
     }
 }

@@ -4,6 +4,7 @@ namespace App\Cms\Types;
 
 use App\Models\Event;
 use Eshlink\Cms\Contracts\ContentSource;
+use Eshlink\Cms\Contracts\PubliclyRoutable;
 use Eshlink\Cms\Rules\NoDashes;
 use Eshlink\Cms\Rules\WordBand;
 use Eshlink\Cms\Schema\Fields\DateTime;
@@ -15,6 +16,7 @@ use Eshlink\Cms\Schema\Fields\Textarea;
 use Eshlink\Cms\Schema\Schema;
 use Eshlink\Cms\Sources\ModelSource;
 use Eshlink\Cms\Sources\RelationMap;
+use Eshlink\Cms\Support\SiteMap;
 
 /**
  * Events, with their dates edited as a repeater over the `event_occurrences`
@@ -30,8 +32,22 @@ use Eshlink\Cms\Sources\RelationMap;
  * matters here more than anywhere else on the site: a truncate-and-reinsert
  * would be a window in which `/free-events` renders an event with no dates.
  */
-class EventType extends BaseType
+class EventType extends BaseType implements PubliclyRoutable
 {
+    /**
+     * `/event-details/{slug}` — the event's own page. Each individual date has
+     * its own address too, but the event slug is the one an editor is working
+     * on when the form is open, so that is what a preview draws.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        $slug = $entry['data']['slug'] ?? $entry['slug'] ?? null;
+
+        return is_string($slug) && $slug !== '' ? '/event-details/'.$slug : null;
+    }
+
     public function key(): string
     {
         return 'event';
@@ -45,6 +61,16 @@ class EventType extends BaseType
     public function pluralLabel(): string
     {
         return 'Events';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'Everything with a date on it.';
+    }
+
+    public function group(): ?string
+    {
+        return SiteMap::GROUP_COLLECTION;
     }
 
     public function hasSlug(): bool

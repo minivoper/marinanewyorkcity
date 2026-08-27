@@ -20,7 +20,12 @@ class MerchType extends PageSingleton
 
     public function label(): string
     {
-        return 'Merch page';
+        return 'Merch';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'Prints and products.';
     }
 
     public function schema(): Schema
@@ -83,5 +88,13 @@ class MerchType extends PageSingleton
             'seo_title' => 'Merch and Prints | marina.newyorkcity',
             'seo_description' => 'New York prints and merch by marina.newyorkcity.',
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/merch';
     }
 }

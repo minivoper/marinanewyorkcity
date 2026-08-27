@@ -9,6 +9,7 @@ use Eshlink\Cms\Schema\Fields\Text;
 use Eshlink\Cms\Schema\Fields\Url;
 use Eshlink\Cms\Schema\Schema;
 use Eshlink\Cms\Sources\ModelSource;
+use Eshlink\Cms\Support\SiteMap;
 
 /**
  * Marina's own `media_assets` catalogue, wrapped so the alt text and credits
@@ -32,12 +33,27 @@ class MediaAssetType extends BaseType
 
     public function label(): string
     {
-        return 'Media asset';
+        return 'Photo description';
     }
 
     public function pluralLabel(): string
     {
-        return 'Media assets';
+        return 'Photo descriptions';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'Alt text and credits for pictures already on your site.';
+    }
+
+    /**
+     * A catalogue of rows about pictures, not the pictures themselves — she
+     * comes here to fix a caption, never to write something new. That is
+     * Setup, whatever `SiteMap` would infer from it not being a singleton.
+     */
+    public function group(): ?string
+    {
+        return SiteMap::GROUP_SETUP;
     }
 
     public function schema(): Schema

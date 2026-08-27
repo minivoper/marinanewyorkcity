@@ -30,7 +30,12 @@ class InstagramFeedType extends PageSingleton
 
     public function label(): string
     {
-        return 'Instagram strip';
+        return 'Instagram';
+    }
+
+    public function blurb(): ?string
+    {
+        return 'The strip of posts on your home page.';
     }
 
     public function schema(): Schema
@@ -209,5 +214,16 @@ class InstagramFeedType extends PageSingleton
                 ],
             ],
         ];
+    }
+
+    /**
+     * The strip has no page of its own: it is drawn on the home page, which is
+     * where a preview of it has to be drawn too.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    public function publicPath(array $entry): ?string
+    {
+        return '/';
     }
 }

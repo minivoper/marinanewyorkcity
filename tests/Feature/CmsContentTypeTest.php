@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Cms\Types\HomeType;
 use App\Cms\Types\ShopType;
 use Eshlink\Cms\Contracts\ContentType;
+use Eshlink\Cms\Contracts\Presentable;
 use Eshlink\Cms\Models\CmsSetting;
 use Eshlink\Cms\Services\EntryService;
+use Eshlink\Cms\Support\SiteMap;
 use Eshlink\Cms\Support\TypeRegistry;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Validation\ValidationException;
@@ -173,5 +175,83 @@ class CmsContentTypeTest extends TestCase
         $entry = app(EntryService::class)->locate($type, null);
 
         $this->assertCount(30, $entry['published_data']['items']);
+    }
+
+    /**
+     * Marina calls these what her own navigation calls them.
+     *
+     * The publishing-system names — "Home page", "News and Press page", "Media
+     * assets" — were the CMS describing its own furniture. She does not have a
+     * Home page and a home; she has a home. Asserted here because a label is
+     * the one thing in a type declaration that has no other test: nothing
+     * breaks when it drifts, it just gets a little stranger every time.
+     */
+    public function test_every_type_is_named_the_way_the_site_owner_names_it(): void
+    {
+        $expected = [
+            'home' => ['Home', 'Home', SiteMap::GROUP_PAGE],
+            'news_and_press' => ['News & Press', 'News & Press', SiteMap::GROUP_PAGE],
+            'travel_usa' => ['Travel USA', 'Travel USA', SiteMap::GROUP_PAGE],
+            'how_i_create' => ['How I Create', 'How I Create', SiteMap::GROUP_PAGE],
+            'free_events' => ['Free Events', 'Free Events', SiteMap::GROUP_PAGE],
+            'shop' => ['Shop', 'Shop', SiteMap::GROUP_PAGE],
+            'merch' => ['Merch', 'Merch', SiteMap::GROUP_PAGE],
+            'accessibility_statement' => ['Accessibility', 'Accessibility', SiteMap::GROUP_PAGE],
+            'instagram_feed' => ['Instagram', 'Instagram', SiteMap::GROUP_PAGE],
+            'post' => ['Story', 'Stories', SiteMap::GROUP_COLLECTION],
+            'event' => ['Event', 'Events', SiteMap::GROUP_COLLECTION],
+            'page' => ['Page', 'Pages', SiteMap::GROUP_COLLECTION],
+            'media_asset' => ['Photo description', 'Photo descriptions', SiteMap::GROUP_SETUP],
+            'site_settings' => ['Settings', 'Settings', SiteMap::GROUP_SETUP],
+        ];
+
+        $types = app(TypeRegistry::class)->all();
+
+        // Every type, and nothing but: a new one added without a name of its
+        // own fails here rather than turning up on the dashboard as a card
+        // called "Wix Import".
+        $this->assertEqualsCanonicalizing(array_keys($expected), array_keys($types));
+
+        foreach ($expected as $key => [$label, $plural, $group]) {
+            $type = $types[$key];
+
+            $this->assertSame($label, $type->label());
+            $this->assertSame($plural, $type->pluralLabel());
+            $this->assertSame($group, SiteMap::group($type), "{$key} is filed under the wrong heading.");
+
+            // Every one of them says something, and says it as a sentence: the
+            // card has a line for it either way, and a blank one is worse than
+            // no card at all.
+            $this->assertInstanceOf(Presentable::class, $type);
+            $this->assertNotNull($type->blurb(), "{$key} has nothing to say for itself.");
+            $this->assertStringEndsWith('.', $type->blurb());
+
+            // No invented symbols. The plate gets the first letter of the name
+            // she just read in the sidebar.
+            $this->assertNull($type->glyph());
+            $this->assertSame(mb_strtoupper(mb_substr($label, 0, 1)), SiteMap::glyph($type));
+        }
+    }
+
+    /**
+     * A label is written into prose — "New story", "Delete this story" — so it
+     * has to survive being lowercased mid-sentence. "Story" does. "Home page"
+     * did too, which is how it lasted this long; "News and Press page" did not.
+     */
+    public function test_a_label_reads_correctly_in_the_middle_of_a_sentence(): void
+    {
+        foreach (app(TypeRegistry::class)->all() as $key => $type) {
+            $this->assertMatchesRegularExpression(
+                '/^[A-Z]/',
+                $type->label(),
+                "{$key} has a label that does not start with a capital.",
+            );
+
+            $this->assertStringNotContainsString(
+                ' page',
+                $type->label(),
+                "{$key} still calls itself a page. She calls it by its name.",
+            );
+        }
     }
 }

@@ -241,10 +241,18 @@ return [
             'cms.preview-gate',
         ],
 
-        'mcp' => [
-            // Phase 2 ships Sanctum PATs; Phase 4 swaps to Passport OAuth.
-            // 'auth:sanctum', 'abilities:mcp:use', 'cms.mcp-gate', 'throttle:cms-mcp',
-        ],
+        /*
+        | 'mcp' is deliberately absent, and this comment is the reason it must
+        | stay absent. It used to be an empty array with the real entries
+        | commented out as a Phase 2 to-do, and the endpoint went live behind
+        | it with no gate, no throttle and no no-index header — an
+        | unauthenticated `tools/call` returned this site's content.
+        |
+        | The package now composes that stack itself
+        | (`Eshlink\Cms\Mcp\McpStack`) and a list named here is *added* to it,
+        | never substituted for it. Naming an empty one here would still be a
+        | lie about what runs.
+        */
 
         /*
         | The hub service API, including `/_cms/health`. Admin host only, and
@@ -502,41 +510,30 @@ return [
     | validated token audience and the endpoint. Publishing carries its own
     | scope and an idempotency key so a client retry is not a second publish.
     |
+    | THIS BLOCK IS DELIBERATELY NOT REPEATED HERE. It was, once, copied out of
+    | the package during Phase 1 — and then the package grew `mcp.oauth`, and a
+    | guard *list*, and this file went on answering for keys it had never heard
+    | of. The visible result on this site was an OAuth lane that silently did
+    | not load and Passport's own ten routes left unscoped on the public host.
+    |
+    | The package fills in every key a published config leaves out (see
+    | `CmsServiceProvider::mergeCmsConfig()`), so saying nothing here means
+    | "whatever eshlink-cms currently ships", which is what marina wants for all
+    | of it. The two switches are environment variables — CMS_MCP_ENABLED and
+    | CMS_MCP_OAUTH_ENABLED — and `config/cms.php` in the package documents the
+    | rest.
+    |
+    | Add a key back here only to say something this site actually means
+    | differently from the package, and expect to keep it up to date by hand
+    | when you do.
+    |
+    | REQUIRES eshlink-cms > v0.1.1. Saying nothing here is only safe because
+    | the package fills nested keys in, and v0.1.1 does not — it merges one
+    | level deep, and its own `middleware.mcp` is an empty placeholder. Do not
+    | set CMS_MCP_ENABLED=true on any host still pinned to v0.1.1: on that
+    | version this file's silence means an MCP endpoint with no gate on it.
+    |
     */
-
-    'mcp' => [
-
-        'enabled' => env('CMS_MCP_ENABLED', false),
-
-        'path' => env('CMS_MCP_PATH', 'mcp'),
-
-        'server' => null, // App\Mcp\SiteContentServer::class
-
-        'guard' => env('CMS_MCP_GUARD', 'sanctum'),
-
-        /*
-        | Tool => required ability. McpAbilityGate rejects before handle().
-        */
-
-        'tool_abilities' => [
-            'list_content_types' => 'content.read',
-            'describe_schema' => 'content.read',
-            'list_entries' => 'content.read',
-            'get_entry' => 'content.read',
-            'create_entry' => 'content.write',
-            'update_entry' => 'content.write',
-            'publish_entry' => 'content.publish',
-            'unpublish_entry' => 'content.publish',
-            'delete_entry' => 'content.delete',
-            'reorder_entries' => 'content.reorder',
-            'revert_entry' => 'content.write',
-            'request_image_upload' => 'media.upload',
-            'list_media' => 'media.read',
-            'set_media_alt' => 'media.write',
-            'get_audit_history' => 'audit.read',
-        ],
-
-    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -42,6 +42,31 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        /*
+         * The two credential kinds the CMS's MCP endpoint answers, named the
+         * way config('cms.mcp.guard') looks for them. Neither is the default
+         * guard and neither touches the admin screens, which are sessions:
+         * Eshlink\Cms\Mcp\McpGuard tries this list in order on the /mcp route
+         * alone and pins whichever one answered, so the audit row names the
+         * token's human owner rather than `system`.
+         *
+         *  - `sanctum`   — a personal access token minted by `cms:token`,
+         *                  pasted into Claude Code's --header flag.
+         *  - `cms-oauth` — a Passport access token a claude.ai or ChatGPT
+         *                  connector obtained through the browser, because a
+         *                  connector platform has nowhere to put a header.
+         */
+
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+
+        'cms-oauth' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
     ],
 
     /*

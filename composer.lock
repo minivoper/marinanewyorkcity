@@ -2631,7 +2631,7 @@
             "dist": {
                 "type": "path",
                 "url": "../eshlink-cms",
-                "reference": "ad5fe4265b6381b2434b1dcea455defcbcca2d2d"
+                "reference": "4a1cc30afe893490783e575e8e438eb3156d4f2c"
             },
             "require": {
                 "bacon/bacon-qr-code": "^3.0",

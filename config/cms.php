@@ -89,6 +89,15 @@ return [
         */
         'localhost' => 'production',
         '127.0.0.1' => 'production',
+
+        /*
+        | The preview host, named here rather than left to CMS_PREVIEW_DOMAIN
+        | so it resolves the same way on a machine with no env for it. It is
+        | reachable by anyone holding the link and findable by nobody: the
+        | no-index headers and the crawler denylist registered in
+        | bootstrap/app.php key off this.
+        */
+        'marina.eshlink.com' => 'preview',
     ],
 
     /*
@@ -219,9 +228,20 @@ return [
             // 'auth:sanctum', 'abilities:mcp:use', 'cms.mcp-gate', 'throttle:cms-mcp',
         ],
 
+        /*
+        | The hub service API, including `/_cms/health`. Admin host only, and
+        | behind CMS_SERVICE_TOKEN: a liveness endpoint that answers an
+        | unauthenticated caller tells anyone who asks that this host runs the
+        | CMS. With the token unset the whole surface 404s, which is the right
+        | state while the hub does not drive this site yet.
+        |
+        | Phase 4 swaps the shared secret for the Ed25519 JWT the hub mints —
+        | aud=<site>, act=<human>, 60s expiry.
+        */
+
         'service' => [
-            // Ed25519 JWT from the hub: aud=<site>, act=<human>, 60s expiry.
-            // 'cms.service-token', 'throttle:cms-service',
+            'cms.admin-host',
+            'cms.service-token',
         ],
 
     ],
@@ -510,6 +530,14 @@ return [
     | a sibling. The audit mirror carries metadata and digests only.
     |
     */
+
+    /*
+    | Shared secret for the service API until the Ed25519 tokens land. No
+    | fallback, deliberately: an unset value disables the surface (404) rather
+    | than leaving it open on a default nobody rotated.
+    */
+
+    'service_token' => env('CMS_SERVICE_TOKEN'),
 
     'hub' => [
         'url' => env('CMS_HUB_URL'),

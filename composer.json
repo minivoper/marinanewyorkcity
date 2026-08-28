@@ -18,7 +18,7 @@
         "php": "^8.3",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
-        "minivoper/eshlink-cms": "^0.2.2"
+        "minivoper/eshlink-cms": "^0.3.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "172c18bd96f08c8359472d15ab85c256",
+    "content-hash": "65121a3f9840c505d08ea7335c8b69da",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2690,16 +2690,16 @@
         },
         {
             "name": "minivoper/eshlink-cms",
-            "version": "v0.3.2",
+            "version": "v0.3.3",
             "source": {
                 "type": "git",
                 "url": "git@github.com:minivoper/eshlink-cms.git",
-                "reference": "4baabcd909542becbe7d6d13dc061008fd61ffb9"
+                "reference": "f16b845ae3da1a1318d3c57c63c4c4b60042e009"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minivoper/eshlink-cms/zipball/4baabcd909542becbe7d6d13dc061008fd61ffb9",
-                "reference": "4baabcd909542becbe7d6d13dc061008fd61ffb9",
+                "url": "https://api.github.com/repos/minivoper/eshlink-cms/zipball/f16b845ae3da1a1318d3c57c63c4c4b60042e009",
+                "reference": "f16b845ae3da1a1318d3c57c63c4c4b60042e009",
                 "shasum": ""
             },
             "require": {
@@ -2788,10 +2788,10 @@
                 "mcp"
             ],
             "support": {
-                "source": "https://github.com/minivoper/eshlink-cms/tree/v0.3.2",
+                "source": "https://github.com/minivoper/eshlink-cms/tree/v0.3.3",
                 "issues": "https://github.com/minivoper/eshlink-cms/issues"
             },
-            "time": "2026-08-28T05:42:51+00:00"
+            "time": "2026-08-28T06:02:27+00:00"
         },
         {
             "name": "monolog/monolog",

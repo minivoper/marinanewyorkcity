@@ -13,8 +13,9 @@
             <div class="section-head fade-up">
                 <h1 class="display t-h1">@cms('free_events.heading')</h1>
             </div>
-            @forelse ($events as $eventItem)
+            @forelse ($events as $index => $eventItem)
                 <article class="event-row fade-up">
+                    <span class="card-index" aria-hidden="true">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
                     <div class="event-row-media">
                         @if ($eventItem->cover_path)
                             <img src="{{ asset($eventItem->cover_path) }}" alt="{{ $eventItem->title }}" loading="lazy">

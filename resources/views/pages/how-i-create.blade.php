@@ -8,23 +8,32 @@
 @endphp
 
 @section('content')
-    <section class="section page">
+    @include('partials.page-head', [
+        'eyebrow' => 'Process',
+        'meta' => 'Featured story',
+        'title' => Cms::value('how_i_create.heading'),
+        'kicker' => Cms::value('how_i_create.seo_description'),
+    ])
+
+    <section class="section page" style="padding-top: 0">
         <div class="wrap">
-            <div class="section-head fade-up">
-                <h1 class="display t-h1">@cms('how_i_create.heading')</h1>
-            </div>
             @if ($featuredPost)
-                <div class="card-grid card-grid--single">
-                    <a class="card fade-up" href="{{ route('posts.show', $featuredPost->slug) }}">
-                        @if ($featuredPost->cover_path)
-                            <div class="card-media">
-                                <img src="{{ asset($featuredPost->cover_path) }}" alt="{{ $featuredPost->title }}" loading="lazy">
-                            </div>
-                        @endif
-                        <h2 class="card-title">{{ $featuredPost->title }}</h2>
-                        <p class="card-excerpt">{{ $featuredPost->excerpt }}</p>
-                    </a>
-                </div>
+                {{-- One story, so it gets the full width as a split rather than
+                     a single lonely card in a three-column grid. --}}
+                <a class="card split fade-up" href="{{ route('posts.show', $featuredPost->slug) }}">
+                    @if ($featuredPost->cover_path)
+                        <div class="card-media">
+                            <img src="{{ asset($featuredPost->cover_path) }}" alt="{{ $featuredPost->title }}" loading="lazy">
+                            <span class="card-bar" aria-hidden="true"></span>
+                        </div>
+                    @endif
+                    <div>
+                        <p class="eyebrow">Featured</p>
+                        <h2 class="display display--sentence t-h3" style="margin-top: 20px">{{ $featuredPost->title }}</h2>
+                        <p class="card-excerpt" style="font-size: 16.5px; max-width: 52ch; margin-top: 22px">{{ $featuredPost->excerpt }}</p>
+                        <span class="eyebrow eyebrow--label" style="display: inline-block; margin-top: 32px; color: var(--color-sand)">Read the story &rarr;</span>
+                    </div>
+                </a>
             @endif
         </div>
     </section>

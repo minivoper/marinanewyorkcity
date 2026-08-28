@@ -7,42 +7,60 @@
 @endphp
 
 @section('content')
-    <article class="section page">
+    @include('partials.page-head', [
+        'eyebrow' => 'Event',
+        'meta' => $selectedOccurrence
+            ? $selectedOccurrence->starts_at->format('M j, Y')
+            : optional($event->occurrences->first())->starts_at?->format('M j, Y'),
+        'title' => $event->title,
+        'sentence' => true,
+    ])
+
+    <article class="section page" style="padding-top: 0">
         <div class="wrap">
             <div class="split">
-                <div class="split-media fade-up">
+                <div class="split-media split-media--ruled fade-up">
                     @if ($event->cover_path)
-                        <img src="{{ asset($event->cover_path) }}" alt="{{ $event->title }}">
+                        <div data-parallax="0.09">
+                            <img src="{{ asset($event->cover_path) }}" alt="{{ $event->title }}">
+                        </div>
                     @endif
                 </div>
-                <div class="split-body fade-up">
-                    <h1 class="page-title">{{ $event->title }}</h1>
-                    <p class="t-lead text-sand">{{ $event->excerpt }}</p>
+                <div class="split-body fade-up" data-delay="120">
+                    <p class="t-lead text-sand" style="margin: 0">{{ $event->excerpt }}</p>
+
                     @if ($event->venue_name)
-                        <p class="card-meta">{{ $event->venue_name }}@if($event->venue_address) — {{ $event->venue_address }}@endif</p>
+                        <div style="margin-top: 34px; border-top: 1px solid var(--hairline-soft); padding-top: 18px">
+                            <p class="eyebrow eyebrow--label">Venue</p>
+                            <p style="margin: 10px 0 0">{{ $event->venue_name }}@if($event->venue_address) — {{ $event->venue_address }}@endif</p>
+                        </div>
                     @endif
 
                     @if ($selectedOccurrence)
-                        <h2 class="display t-h5 stack-title">Selected date</h2>
-                        <p class="text-sand">
-                            {{ $selectedOccurrence->starts_at->format('F j, Y g:i A') }}
-                            @if ($selectedOccurrence->ends_at)
-                                – {{ $selectedOccurrence->ends_at->format('g:i A') }}
-                            @endif
-                        </p>
+                        <div style="margin-top: 24px; border-top: 1px solid var(--hairline-soft); padding-top: 18px">
+                            <p class="eyebrow eyebrow--label">Selected date</p>
+                            <p style="margin: 10px 0 0">
+                                {{ $selectedOccurrence->starts_at->format('F j, Y g:i A') }}
+                                @if ($selectedOccurrence->ends_at)
+                                    – {{ $selectedOccurrence->ends_at->format('g:i A') }}
+                                @endif
+                            </p>
+                        </div>
                     @endif
 
                     @if ($event->occurrences->isNotEmpty())
-                        <h2 class="display t-h5 stack-title">Dates</h2>
-                        <div class="date-pill-list">
-                            @foreach ($event->occurrences as $occurrence)
-                                <a
-                                    class="date-pill {{ $selectedOccurrence && $selectedOccurrence->is($occurrence) ? 'is-active' : '' }}"
-                                    href="{{ route('events.show', $occurrence->occurrence_slug) }}"
-                                >
-                                    {{ $occurrence->starts_at->format('M j, Y g:i A') }}
-                                </a>
-                            @endforeach
+                        <div style="margin-top: 24px; border-top: 1px solid var(--hairline-soft); padding-top: 18px">
+                            <p class="eyebrow eyebrow--label">Dates</p>
+                            <div class="date-pill-list" style="margin-top: 14px">
+                                @foreach ($event->occurrences as $occurrence)
+                                    <a
+                                        class="date-pill {{ $selectedOccurrence && $selectedOccurrence->is($occurrence) ? 'is-active' : '' }}"
+                                        href="{{ route('events.show', $occurrence->occurrence_slug) }}"
+                                    >
+                                        {{ $occurrence->starts_at->format('M j, Y g:i A') }}
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     @endif
                 </div>

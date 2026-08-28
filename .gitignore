@@ -33,3 +33,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# The delivered redesign bundle. Kept in the working tree for reference, but it
+# holds a second copy of every blade file and must never be committed or shipped.
+/Website UI consistency and animations implementation/

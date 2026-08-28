@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-US" class="no-js">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,13 +16,16 @@
     />
     <link rel="preload" href="/fonts/arial-w01-black.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/avenir-lt-w01_35-light.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/din-next-w01-light.woff2" as="font" type="font/woff2" crossorigin>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <header class="site-header {{ ($transparentHeader ?? false) ? '' : 'site-header--solid' }}">
+    {{-- The header is fixed on every page now, transparent over a hero and
+         solid once scrolled. One header, one behaviour, no per-page variant. --}}
+    <header class="site-header">
         <div class="wrap">
             <a class="site-logo" href="{{ route('home') }}" aria-label="marina.newyorkcity home">
-                <img src="{{ asset('media/brand/logo.png') }}" alt="marina.newyorkcity" width="76" height="76">
+                <img src="{{ asset('media/brand/logo.png') }}" alt="marina.newyorkcity" width="62" height="62">
             </a>
             <nav id="primary-nav" class="site-nav" aria-label="Primary navigation">
                 <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>Home</a>
@@ -36,11 +39,12 @@
             <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">Menu</button>
             <div class="header-tools">
                 <a class="header-search" href="{{ route('search') }}" aria-label="Search">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
                         <circle cx="11" cy="11" r="7"></circle>
                         <path d="M20 20l-3.5-3.5" stroke-linecap="round"></path>
                     </svg>
                 </a>
+                <a class="btn btn--sm" href="{{ route('contact.show') }}">Contact us <span class="btn-arrow" aria-hidden="true">&rarr;</span></a>
             </div>
         </div>
     </header>
@@ -54,11 +58,12 @@
             <div class="footer-grid">
                 <div>
                     <a class="footer-logo" href="{{ route('home') }}">
-                        <img src="{{ asset('media/brand/logo.png') }}" alt="marina.newyorkcity" width="88" height="88">
+                        <img src="{{ asset('media/brand/logo.png') }}" alt="marina.newyorkcity" width="82" height="82">
                     </a>
-                    <p class="text-mid footer-blurb">Contact us<br>
+                    <div class="footer-blurb">
+                        <p class="eyebrow eyebrow--label">Contact us</p>
                         <a href="mailto:{{ config('site.email') }}">{{ config('site.email') }}</a>
-                    </p>
+                    </div>
                 </div>
                 <nav aria-label="Footer navigation">
                     <p class="footer-title">Explore</p>
@@ -83,7 +88,10 @@
                     <a href="https://www.facebook.com/marina.nycity" rel="noopener">Facebook</a>
                 </nav>
             </div>
-            <p class="footer-bottom">© {{ now()->year }} @marina.newyorkcity. All Rights Reserved</p>
+            <div class="footer-bottom">
+                <p>© {{ now()->year }} @marina.newyorkcity. All Rights Reserved</p>
+                <p>New York City</p>
+            </div>
         </div>
     </footer>
 </body>

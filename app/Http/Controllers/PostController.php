@@ -15,7 +15,12 @@ class PostController extends Controller
         $type = in_array($type, [Post::TYPE_NEWS, Post::TYPE_GUIDE], true) ? $type : null;
 
         $posts = Post::published()
-            ->select(['id', 'type', 'slug', 'title', 'excerpt', 'published_at', 'read_minutes', 'location_name'])
+            // cover_path or the index pages have no pictures on them: the card
+            // renders its image, its gold hover bar and its News/Guide badge
+            // inside `@if ($postItem->cover_path)`, and the hover parallax needs
+            // an <img> to move. Without this column that whole block is skipped
+            // and /blog, /news and /guides come out as lists of text.
+            ->select(['id', 'type', 'slug', 'title', 'excerpt', 'published_at', 'read_minutes', 'location_name', 'cover_path'])
             ->when($type, fn (Builder $query): Builder => $query->where('type', $type))
             ->latest('published_at')
             ->paginate(12);

@@ -13,6 +13,9 @@ class SeoHead extends Component
 
     public string $imageUrl;
 
+    /** Whether $imageUrl is the site's own 1200x630 card rather than a page's cover. */
+    public bool $imageIsDefault;
+
     public string $pageTitle;
 
     /**
@@ -39,9 +42,27 @@ class SeoHead extends Component
         $this->pageTitle = $title ?: config('app.name');
         $this->description ??= 'New York City news, events, guides, and cinematic stories by Marina Kapler.';
         $this->canonicalUrl = $canonical ?: $baseUrl.$path;
-        $this->imageUrl = $image
-            ? (str_starts_with($image, 'http') ? $image : $baseUrl.'/'.ltrim($image, '/'))
-            : $baseUrl.'/favicon.ico';
+        /*
+         | A share card has to load from the host that actually served the page.
+         | Production keeps the production URL — that is what the social meta is
+         | for, and PhotoOnAPublishedPageTest pins it. Anywhere else the image
+         | resolves against the host answering, because a preview host pointing
+         | its og:image at marinanewyorkcity.com asks for a file that domain does
+         | not serve yet, and the card comes back blank.
+         |
+         | This is not the canonical rule in reverse: a canonical teaches a
+         | crawler the production URL exists, an image reference does not. If
+         | anything this keeps one more production URL off the preview host.
+         */
+        $imageBase = HostMode::isProduction() ? $baseUrl : rtrim(HostMode::rootUrl(), '/');
+
+        // The default was /favicon.ico — a 16px icon offered as a share card, and
+        // for most of this site's life a zero-byte file.
+        $this->imageIsDefault = $image === null || $image === '';
+
+        $this->imageUrl = $this->imageIsDefault
+            ? $imageBase.'/media/brand/og-image.jpg'
+            : (str_starts_with($image, 'http') ? $image : $imageBase.'/'.ltrim($image, '/'));
         $this->canonicalSuppressed = HostMode::canonicalsSuppressed();
     }
 

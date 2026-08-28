@@ -14,6 +14,16 @@
         :event="$event ?? null"
         :occurrence="$selectedOccurrence ?? null"
     />
+    {{-- The mark is near-white on a transparent field, so these are composited
+         onto the brand black — left alone it disappears against a light tab.
+         favicon.ico stays because browsers request it unprompted; the one that
+         was there was zero bytes, which is worse than none. --}}
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <meta name="theme-color" content="#000000">
+
     <link rel="preload" href="/fonts/arial-w01-black.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/avenir-lt-w01_35-light.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/fonts/din-next-w01-light.woff2" as="font" type="font/woff2" crossorigin>

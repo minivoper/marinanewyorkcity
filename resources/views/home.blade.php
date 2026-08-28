@@ -60,11 +60,11 @@
                      the 44 stayed undecoded and animated past as blank slots,
                      which read as the loop breaking. --}}
                 @foreach ($partnerLogos as $logo)
-                    <img src="{{ asset('media/about/'.$logo['file']) }}" alt="{{ $logo['alt'] }}" decoding="async">
+                    <img src="{{ asset('media/about/'.$logo['file']) }}" alt="{{ $logo['alt'] }}" decoding="async" fetchpriority="low">
                 @endforeach
                 {{-- Second copy: the track translates -50%, so the loop is seamless. --}}
                 @foreach ($partnerLogos as $logo)
-                    <img src="{{ asset('media/about/'.$logo['file']) }}" alt="" aria-hidden="true" decoding="async">
+                    <img src="{{ asset('media/about/'.$logo['file']) }}" alt="" aria-hidden="true" decoding="async" fetchpriority="low">
                 @endforeach
             </div>
         </div>

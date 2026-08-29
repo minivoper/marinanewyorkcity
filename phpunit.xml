@@ -26,6 +26,29 @@
         <!-- A test that publishes and then asks for the page must not be told
              what the page said a moment ago. -->
         <env name="CMS_READ_CACHE_TTL" value="0"/>
+        <!-- The admin host, stated here rather than inherited from a developer's
+             .env. Every CMS route lives under Route::domain(), so with this
+             unset the admin, MCP and OAuth route files are not registered at
+             all — and McpRouteScopingTest, whose whole job is to prove no route
+             escaped the domain group, would pass by finding nothing. A guard
+             that passes when the thing it guards is absent is not a guard. -->
+        <env name="CMS_ADMIN_DOMAIN" value="cms.localhost"/>
+        <!-- Both credential lanes on, which is the deployed shape: a Sanctum
+             personal access token for Claude Code and a Passport OAuth token
+             for Marina's ChatGPT connector. They are set here rather than
+             through config() in a test because CmsServiceProvider::register()
+             reads CMS_MCP_OAUTH_ENABLED in order to call
+             Passport::ignoreRoutes(), and register() is the last moment before
+             Passport's own boot() puts ten unscoped routes on the router. -->
+        <env name="CMS_MCP_ENABLED" value="true"/>
+        <env name="CMS_MCP_OAUTH_ENABLED" value="true"/>
+        <!-- Deliberately blank, so the issuer is DERIVED from the admin host
+             the routes are scoped to — which is what the deployed site does,
+             and the only spelling the discovery documents and the `iss` on
+             every authorization response can agree on. A developer's .env
+             pointing at a local port would otherwise decide what this suite
+             thinks the issuer is. -->
+        <env name="CMS_MCP_OAUTH_ISSUER" value=""/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="DB_URL" value=""/>

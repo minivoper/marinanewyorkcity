@@ -180,6 +180,14 @@ if (navToggle && siteNav) {
         const isOpen = siteNav.classList.toggle('is-open');
 
         navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+        // The header's own class, rather than leaving the backdrop to
+        // `:has(.site-nav.is-open)`. An unsupported :has() drops the entire
+        // rule, and that rule is the only thing putting a floor under the open
+        // menu — on a hero the links would be lying on the photograph.
+        if (header) {
+            header.classList.toggle('nav-is-open', isOpen);
+        }
     });
 }
 

@@ -300,6 +300,9 @@ img {
 
 .site-header.is-stuck {
     background: rgba(0, 0, 0, 0.86);
+    /* Safari only took this unprefixed at 18, so every iPhone before that was
+       getting no blur at all. The 0.86 background carries it either way. */
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border-bottom-color: var(--hairline-soft);
     padding-block: 10px;
@@ -414,9 +417,17 @@ img {
     }
 
     /* An open menu needs a floor under it. Over a hero the header is deliberately
-       transparent until you scroll, which left the links lying on the photograph. */
+       transparent until you scroll, which left the links lying on the photograph.
+
+       `.nav-is-open` is set by the toggle handler and is the one that matters;
+       the `:has()` twin is only so the backdrop still appears for the frame
+       before script runs. Safari did not support :has() until 15.4, and an
+       unsupported selector invalidates the whole rule — this must not be the
+       only thing holding the menu up. */
+    .site-header.nav-is-open,
     .site-header:has(.site-nav.is-open) {
         background: rgba(0, 0, 0, 0.94);
+        -webkit-backdrop-filter: blur(16px);
         backdrop-filter: blur(16px);
         border-bottom-color: var(--hairline-soft);
     }

@@ -124,11 +124,44 @@ class AdminErrorPagesTest extends TestCase
         }
     }
 
-    public function test_the_public_site_gets_none_of_the_admins_headers(): void
+    /**
+     * The public site states its own policy, never the admin's.
+     *
+     * This used to assert the public host carried no framing header and no CSP
+     * at all, which was true when the only thing writing them was
+     * `cms.security-headers` on the admin group. `PublicSecurityHeaders` has
+     * since arrived and deliberately gives a production host its own policy, so
+     * "no headers" stopped describing anything correct. What the original bug
+     * was — the admin's policy escaping onto the public site — is still exactly
+     * what this guards, and the two are told apart by more than their presence:
+     *
+     *  - the admin **enforces** its CSP; the public host ships Report-Only
+     *    until a site sets `CMS_PUBLIC_CSP_ENFORCE`;
+     *  - the admin sends `no-referrer`; the public host sends
+     *    `strict-origin-when-cross-origin`.
+     *
+     * Asserted on a 404, because a URI that matched no route enters no route
+     * group, and that is where the headers went missing in the first place.
+     */
+    public function test_the_public_site_states_its_own_policy_not_the_admins(): void
     {
         $response = $this->get(self::PUBLIC_HOST.'/no-such-page')->assertNotFound();
 
-        $this->assertNull($response->headers->get('X-Frame-Options'));
-        $this->assertNull($response->headers->get('Content-Security-Policy-Report-Only'));
+        // The admin's enforced policy must not be here. This is the assertion
+        // that fails if the admin stack is ever registered globally again.
+        $this->assertNull(
+            $response->headers->get('Content-Security-Policy'),
+            'The admin enforces its CSP; the public host received an enforced one.',
+        );
+        $this->assertNotSame(
+            'no-referrer',
+            $response->headers->get('Referrer-Policy'),
+            "The admin host's referrer policy reached the public site.",
+        );
+
+        // And the public host does have a policy of its own, so this test
+        // cannot pass by the headers simply being gone.
+        $this->assertSame('strict-origin-when-cross-origin', $response->headers->get('Referrer-Policy'));
+        $this->assertNotNull($response->headers->get('Content-Security-Policy-Report-Only'));
     }
 }

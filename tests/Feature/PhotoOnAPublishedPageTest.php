@@ -29,6 +29,19 @@ class PhotoOnAPublishedPageTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
+    /**
+     * The public host, named rather than left to the default.
+     *
+     * "On the public host" is in this file's own description, and it was the
+     * one thing it did not do: the suite's default host is `marina.localhost`,
+     * which resolves as **preview**, where `ForceNoIndex` clamps every response
+     * to `no-store` and `asset()` builds preview addresses. So the immutable
+     * caching this asserts was being contradicted by a header that has nothing
+     * to do with media, and the absolute URLs came out pointing at a host no
+     * visitor uses.
+     */
+    private const PRODUCTION = 'http://marinanewyorkcity.com';
+
     #[Test]
     public function a_photograph_added_to_the_library_can_be_fetched_by_anybody(): void
     {
@@ -40,7 +53,7 @@ class PhotoOnAPublishedPageTest extends TestCase
         // whichever host happened to be answering when it was chosen.
         $this->assertStringStartsWith('/cms-media/', $url);
 
-        $response = $this->get($url);
+        $response = $this->get(self::PRODUCTION.$url);
 
         $response->assertOk();
         $this->assertStringStartsWith('image/', (string) $response->headers->get('Content-Type'));
@@ -55,7 +68,7 @@ class PhotoOnAPublishedPageTest extends TestCase
     {
         $media = $this->addPhotograph();
 
-        $this->get(app(MediaService::class)->url($media, 'thumb'))
+        $this->get(self::PRODUCTION.app(MediaService::class)->url($media, 'thumb'))
             ->assertOk();
     }
 
@@ -72,18 +85,27 @@ class PhotoOnAPublishedPageTest extends TestCase
             'published_at' => now()->subDay(),
         ]);
 
-        $page = $this->get('/post/'.$post->slug);
+        $page = $this->get(self::PRODUCTION.'/post/'.$post->slug);
 
         $page->assertOk();
 
         // `asset()` resolves the stored root-relative path against the host
         // answering, so the page carries the absolute address and the social
         // card meta carries the production one. Both end in the same path.
-        $page->assertSee('<img src="http://127.0.0.1:8000'.$url.'"', false);
+        // The page's own <img> follows the host that answered, scheme and all.
+        // Only the literal 127.0.0.1:8000 was wrong here: that was a fact about
+        // one developer's machine, and the app has since moved.
+        $page->assertSee('<img src="'.self::PRODUCTION.$url.'"', false);
+        // The social card does NOT follow the answering host. It is canonical
+        // and https, because the card is fetched by Facebook and Slack long
+        // after the response is gone, from whatever address is in the markup,
+        // and that address has to be the real one over TLS. So this stays the
+        // literal it always was, and the difference between the two lines is
+        // the point rather than an inconsistency.
         $page->assertSee('og:image" content="https://marinanewyorkcity.com'.$url.'"', false);
 
         // And the address on the page is one a visitor can actually GET.
-        $this->get($url)->assertOk();
+        $this->get(self::PRODUCTION.$url)->assertOk();
     }
 
     #[Test]
@@ -97,7 +119,7 @@ class PhotoOnAPublishedPageTest extends TestCase
             'published_at' => now()->subDay(),
         ]);
 
-        $this->get('/post/'.$post->slug)
+        $this->get(self::PRODUCTION.'/post/'.$post->slug)
             ->assertOk()
             ->assertSee('media/posts/example.jpg', false);
     }
@@ -107,13 +129,35 @@ class PhotoOnAPublishedPageTest extends TestCase
     {
         // The route reads one disk under one prefix. It is not a file server
         // with a content-addressed skin on.
-        $this->get('/cms-media/../../.env')->assertNotFound();
-        $this->get('/cms-media/framework/sessions/anything')->assertNotFound();
+        $this->get(self::PRODUCTION.'/cms-media/../../.env')->assertNotFound();
+        $this->get(self::PRODUCTION.'/cms-media/framework/sessions/anything')->assertNotFound();
     }
 
+    /**
+     * A photograph on a disk that cannot address itself.
+     *
+     * The disk is pinned rather than inherited, and that is the point. What is
+     * under test is the package's own delivery route — the answer for every
+     * disk with no public address of its own, and the place the original bug
+     * lived, where the URL was produced and the route behind it then refused
+     * every unsigned request. Inheriting `cms.media.disk` made that a lottery:
+     * locally it resolves to `public`, which *can* address itself, so the URL
+     * came out as `/storage/...`, there is no `public/storage` symlink in a
+     * checkout and no route behind that path either, and three tests failed on
+     * an environment rather than on the code.
+     *
+     * `local` has no `url` and is not `visibility: public`, so
+     * `MediaService::isPubliclyAddressable()` says no and the proxy answers.
+     *
+     * **What this deliberately does not cover:** production sets
+     * `CMS_MEDIA_DISK` to S3, which addresses itself, so the bytes there are
+     * fetched from the bucket and never pass through this route at all.
+     */
     private function addPhotograph(): Media
     {
-        Storage::fake(config('cms.media.disk'));
+        config(['cms.media.disk' => 'local']);
+
+        Storage::fake('local');
 
         return app(MediaService::class)->store(
             $this->jpeg(),

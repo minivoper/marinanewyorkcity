@@ -45,10 +45,22 @@ class NoIndexStackTest extends TestCase
      */
     private const PREVIEW_ONLY_HEADERS = [
         'x-robots-tag',
-        'referrer-policy',
         'pragma',
         'expires',
     ];
+
+    /**
+     * `referrer-policy` used to be in the list above, and cannot be any more.
+     *
+     * `PublicSecurityHeaders` arrived in the package and deliberately writes
+     * `strict-origin-when-cross-origin` on production hosts only — the value a
+     * public site wants, where analytics keep the origin and the path stays
+     * home. So the header being *absent* stopped being the thing worth
+     * asserting, while the thing this test actually protects did not change:
+     * production must never inherit the preview's `no-referrer`, which exists
+     * so a pasted preview link leaks nothing.
+     */
+    private const PREVIEW_REFERRER_POLICY = 'no-referrer';
 
     public function test_the_preview_host_serves_noindex_on_a_page_that_exists(): void
     {
@@ -125,6 +137,14 @@ class NoIndexStackTest extends TestCase
                 "The production host acquired a {$header} header it did not have before.",
             );
         }
+
+        // Production states its own referrer policy. What it must never do is
+        // state the preview's.
+        $this->assertNotSame(
+            self::PREVIEW_REFERRER_POLICY,
+            $response->headers->get('Referrer-Policy'),
+            'The preview host\'s referrer policy reached production.',
+        );
 
         // Not `no-store`. Production is where the whole SEO surface exists to
         // be found, and a page a CDN refuses to hold is a slower page for no
